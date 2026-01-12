@@ -5,15 +5,15 @@ import {
 } from "../lib/listas.js";
 
 /**
- * @fileoverview Handler for creating standard Ascenso player lists with reaction support
+ * @fileoverview Handler for creating Hexagonal player lists with reaction support
  * @author Carlos G
  * @license MIT
  * @copyright 2026 Carlos G. All rights reserved.
  * @requires ../lib/listas.js
- * @module handlers/ascenso
+ * @module handlers/Hexagonal
  * @version 1.0.0
  * 
- * This module creates standard Ascenso player lists that support reaction-based 
+ * This module creates Hexagonal player lists that support reaction-based 
  * player management. Part of the comprehensive list management ecosystem.
  * 
  * CREDITS & USAGE TERMS:

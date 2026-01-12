@@ -5,15 +5,15 @@ import {
 } from "../lib/listas.js";
 
 /**
- * @fileoverview Handler for creating standard Ascenso player lists with reaction support
+ * @fileoverview Handler for creating Cuadrilatero player lists with reaction support
  * @author Carlos G
  * @license MIT
  * @copyright 2026 Carlos G. All rights reserved.
  * @requires ../lib/listas.js
- * @module handlers/ascenso
+ * @module handlers/cuadrilatero
  * @version 1.0.0
  * 
- * This module creates standard Ascenso player lists that support reaction-based 
+ * This module creates Cuadrilatero player lists that support reaction-based 
  * player management. Part of the comprehensive list management ecosystem.
  * 
  * CREDITS & USAGE TERMS:
