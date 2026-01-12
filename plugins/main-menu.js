@@ -14,23 +14,23 @@ const tags = {
 
 const defaultMenu = {
   before: `
-⧼⋆꙳• *𝙍𝙀𝙂𝙄𝙎𝙏𝙍𝙊 𝘿𝙊𝙇𝙋𝙃𝙄𝙉* ⋆꙳•⧽
+⧼⋆꙳• *REGISTRO DOLPHIN* ⋆꙳•⧽
 
-> 🪐 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
+> 🐬 𝙉𝙤𝙢𝙗𝙧𝙚   » %name
 > ⚙️ 𝙉𝙞𝙫𝙚𝙡     » %level
 > ⚡ 𝙀𝙭𝙥        » %exp / %maxexp
 > 🌐 𝙈𝙤𝙙𝙤      » %mode
 > ⏳ 𝘼𝙘𝙩𝙞𝙫𝙤   » %muptime
 > 👥 𝙐𝙨𝙪𝙖𝙧𝙞𝙤𝙨 » %totalreg
 
-🤖 » 𝐌𝐄𝐍𝐔 𝘿𝙊𝙇𝙋𝙃𝙄𝙉 «
-👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞ 𝐂𝐚𝐫𝐥𝐨𝐬 𝑮 𖣘 «
+🤖 » 𝐌𝐄𝐍𝐔 𝐃𝐎𝐋𝐏𝐇𝐈𝐍 𝐁𝐎𝐓 «
+👑 » 𝗢𝗽𝗲𝗿𝗮𝗱𝗼𝗿:—͟͟͞͞ 𝐂𝐚𝐫𝐥𝐨𝐬 𝐆 «
 %readmore
 `.trimStart(),
-  header: '\n⧼⋆꙳•〔 🛸 %category 〕⋆꙳•⧽',
-  body: '> 🔖 %cmd',
+  header: '\n⧼⋆꙳•〔 🐬 %category 〕⋆꙳•⧽',
+  body: '> 🐬 %cmd',
   footer: '╰⋆꙳•❅‧*₊⋆꙳︎‧*❆₊⋆╯',
-  after: '\n⌬ 𝗖𝗬𝗕𝗘𝗥 𝗠𝗘𝗡𝗨 🧬 - Sistema ejecutado con éxito.'
+  after: '\n⌬ 𝗗𝗢𝗟𝗣𝗛𝗜𝗡 𝗠𝗘𝗡𝗨 🌊 - Sistema ejecutado con éxito.'
 }
 
 const menuDir = './media/menu'
@@ -48,11 +48,11 @@ const loadMenuMedia = jid => {
 const fetchBuffer = async url =>
   Buffer.from(await (await fetch(url)).arrayBuffer())
 
-const defaultThumb = await fetchBuffer('https://files.catbox.moe/nvjw2u.png')
-const defaultVideo = await fetchBuffer('https://files.catbox.moe/jkokln.mp4')
+const defaultThumb = await fetchBuffer('https://files.catbox.moe/2p3mon.png')
+const defaultVideo = await fetchBuffer('https://files.catbox.moe/nqw5zd.mp4') 
 
 let handler = async (m, { conn, usedPrefix }) => {
-  await conn.sendMessage(m.chat, { react: { text: '⚔️', key: m.key } })
+  await conn.sendMessage(m.chat, { react: { text: '🐬', key: m.key } }) 
 
   const botJid = conn.user.jid
   const menuMedia = loadMenuMedia(botJid)
@@ -112,17 +112,17 @@ let handler = async (m, { conn, usedPrefix }) => {
     gifPlayback: true,
     jpegThumbnail: uniqueThumb,
     caption: text,
-    footer: '🧠 DOLPHIN SYSTEM 🐬',
+    footer: '🐬 DOLPHIN BOT SYSTEM 🌊',
     buttons: [
       { buttonId: `${usedPrefix}menurpg`, buttonText: { displayText: '🏛️ M E N U R P G' }, type: 1 },
       { buttonId: `${usedPrefix}code`, buttonText: { displayText: '🕹 ＳＥＲＢＯＴ' }, type: 1 }
     ],
     contextInfo: {
       externalAdReply: {
-        title: menuMedia.menuTitle || '𝖣𝗈𝗅𝗉𝗁𝗂𝗇 𝖡𝗈𝗍 || 𝖵𝟣',
-        body: 'ִ┊𝘿𝙚𝙫 || 𝘾𝙖𝙧𝙡𝙤𝙨 𝙂',
+        title: menuMedia.menuTitle || '𝕯𝖔𝖑𝖕𝖍𝖎𝖓 𝕭𝖔𝖙 | 𝕯𝖔𝖑𝖕𝖍𝖎𝖓 𝕰𝖉𝖎𝖙𝖎𝖔𝖓 🐬',
+        body: 'ִ┊࣪ ˖𝐃𝐞𝐯 • 𝐂𝐚𝐫𝐥𝐨𝐬 𝐆 🌊',
         thumbnail: uniqueThumb,
-        sourceUrl: 'https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2',
+        sourceUrl: 'https://github.com/CARLOSGRCIAGRCIA/DolphinV2',
         mediaType: 1,
         renderLargerThumbnail: true
       }
