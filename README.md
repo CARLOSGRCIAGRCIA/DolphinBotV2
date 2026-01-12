@@ -218,7 +218,16 @@ git pull origin main
 docker compose build --no-cache
 docker compose --profile default up -d
 ```
+```bash
+# Para iniciar solo el bot normal (perfil default)
+docker-compose --profile default up -d --build
 
+# O para iniciar solo el bot con QR
+docker-compose --profile qr up -d --build
+
+# O para iniciar solo el bot con código
+docker-compose --profile code up -d --build
+```
 ## 🐋 Instalación con Docker (Método Manual)
 
 ```bash
