@@ -1,91 +1,77 @@
-import fs from 'fs'
-import path from 'path'
+import { WAMessageStubType } from '@whiskeysockets/baileys'
+import fetch from 'node-fetch'
 
-const imgDir = path.resolve('./src/img')
-let images = []
+export async function before(m, { conn, participants, groupMetadata }) {
+  if (!m.messageStubType || !m.isGroup) return true
 
-try {
-  images = fs.readdirSync(imgDir).filter(file => /\.(jpe?g|png|webp)$/i.test(file))
-} catch {
-  images = []
-}
+  let who = m.messageStubParameters[0]
+  let taguser = `@${who.split('@')[0]}`
+  let chat = global.db.data.chats[m.chat]
+  let defaultImage = 'https://files.catbox.moe/5efgl2.webp'
 
-global.getRandomImage = () => {
-  if (images.length === 0) return null
-  const randomImage = images[Math.floor(Math.random() * images.length)]
-  return fs.readFileSync(path.join(imgDir, randomImage))
-}
-
-export async function before(m, { conn }) {
-  try {
-    if (!m.isGroup) return true
-    const chat = global.db.data.chats[m.chat]
-    if (!chat || !chat.welcome) return true
-
-    const type = m.messageStubType
-    if (![7, 27, 28, 32].includes(type)) return true
-
-    const params = m.messageStubParameters || []
-    if (params.length === 0 && !m.participant) return true
-
-    const who = (params[0] || m.participant) + '@s.whatsapp.net'
-    const user = global.db.data.users[who]
-    const userName = user ? user.name : await conn.getName(who)
-    const mentionedJids = [who]
-
-    const audioWelcome = 'https://files.catbox.moe/ha1slk.mp3'
-    const audioGoodbye = 'https://files.catbox.moe/5cslwo.mp3'
-    const thumbnailBuffer = global.getRandomImage()
-
-    if ([7, 27].includes(type)) {
-      await conn.sendMessage(
-        m.chat,
-        {
-          audio: { url: audioWelcome },
-          mimetype: 'audio/mpeg',
-          ptt: true,
-          contextInfo: {
-            mentionedJid: mentionedJids,
-            externalAdReply: {
-              title: "─ W E L C O M E ─🥷🏻",
-              body: `${userName} ha llegado al grupo!`,
-              thumbnail: thumbnailBuffer,
-              mediaType: 1,
-              renderLargerThumbnail: false,
-              sourceUrl: "https://wa.me/" + who.split('@')[0]
-            }
-          }
-        },
-        { quoted: m }
-      )
+  if (chat.welcome) {
+    let img
+    try {
+      let pp = await conn.profilePictureUrl(who, 'image')
+      img = await (await fetch(pp)).buffer()
+    } catch {
+      img = await (await fetch(defaultImage)).buffer()
     }
 
-    if ([28, 32].includes(type)) {
-      await conn.sendMessage(
-        m.chat,
-        {
-          audio: { url: audioGoodbye },
-          mimetype: 'audio/mpeg',
-          ptt: true,
-          contextInfo: {
-            mentionedJid: mentionedJids,
-            externalAdReply: {
-              title: "─ A D I Ó S ─👋🏻",
-              body: `${userName} se ha despedido.`,
-              thumbnail: thumbnailBuffer,
-              mediaType: 1,
-              renderLargerThumbnail: false,
-              sourceUrl: "https://wa.me/" + who.split('@')[0]
-            }
-          }
-        },
-        { quoted: m }
-      )
-    }
+    let defaultWelcome = `✨ Bienvenido/a ✨
 
-    return true
-  } catch (err) {
-    console.error('[ERROR en welcome/adios]:', err)
-    return true
+${taguser}
+*${groupMetadata.subject}*
+
+Un nuevo miembro se une a la comunidad. Esperamos que tu estancia sea agradable y puedas compartir momentos increíbles con nosotros.
+
+No olvides leer las reglas del grupo y respetar a todos los miembros.
+
+¡Disfruta tu estadía! 🌊`
+
+    let defaultLeave = `👋 Despedida
+
+${taguser}
+*${groupMetadata.subject}*
+
+Un miembro ha decidido abandonar el grupo. Le deseamos lo mejor en su camino.
+
+Que encuentres lo que buscas. Hasta pronto. 🌅`
+
+    let defaultKick = `⚠️ Expulsión
+
+${taguser}
+*${groupMetadata.subject}*
+
+Un miembro ha sido removido del grupo por incumplir las normas establecidas.
+
+Mantengamos un ambiente de respeto para todos. 🛡️`
+
+    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_ADD) {
+      let bienvenida = chat.customWelcome || defaultWelcome
+      bienvenida = bienvenida
+        .replace(/@user/gi, taguser)
+        .replace(/{group}/gi, groupMetadata.subject)
+
+      await conn.sendMessage(m.chat, { image: img, caption: bienvenida, mentions: [who] })
+
+    } else if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_LEAVE) {
+      let leave = chat.customLeave || defaultLeave
+      leave = leave
+        .replace(/@user/gi, taguser)
+        .replace(/{group}/gi, groupMetadata.subject)
+
+      await conn.sendMessage(m.chat, { image: img, caption: leave, mentions: [who] })
+
+    } else if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_REMOVE) {
+      let kick = chat.customKick || defaultKick
+      kick = kick
+        .replace(/@user/gi, taguser)
+        .replace(/{group}/gi, groupMetadata.subject)
+
+      await conn.sendMessage(m.chat, { image: img, caption: kick, mentions: [who] })
+    }
   }
+
+  return true
 }

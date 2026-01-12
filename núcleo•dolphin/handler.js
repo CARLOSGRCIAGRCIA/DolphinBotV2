@@ -150,8 +150,16 @@ export async function handler(chatUpdate) {
       ? (conn.chats[m.chat] || {}).metadata ||
         (await this.groupMetadata(m.chat).catch(() => null))
       : {};
-    const participants =
-      m.isGroup && groupMetadata ? groupMetadata.participants || [] : [];
+    const participants = (() => {
+      if (!m.isGroup || !groupMetadata) return [];
+      if (
+        !groupMetadata.participants ||
+        !Array.isArray(groupMetadata.participants)
+      ) {
+        return [];
+      }
+      return groupMetadata.participants;
+    })();
 
     const user =
       participants.find(
