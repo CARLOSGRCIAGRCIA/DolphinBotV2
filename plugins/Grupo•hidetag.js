@@ -1,14 +1,26 @@
 import { generateWAMessageFromContent } from "@whiskeysockets/baileys";
 import * as fs from "fs";
+
 var handler = async (m, { conn, text, participants, isOwner, isAdmin }) => {
-  if (!m.quoted && !text)
-    return conn.reply(m.chat, `🚩 Ingrese un texto`, m, rcanal);
-  
-  // Agregar pie de mensaje si no existe
   const footer = "\n\n> 𝘿𝙤𝙡𝙥𝙝𝙞𝙣 𝘽𝙤𝙩 🐬";
-  const hasFooter = text && text.includes("𝘿𝙤𝙡𝙥𝙝𝙞𝙣 𝘽𝙤𝙩 🐬");
-  const finalText = text ? (hasFooter ? text : text + footer) : "";
-  
+
+  let finalText = "";
+  if (text) {
+    const hasFooter = text.includes("𝘿𝙤𝙡𝙥𝙝𝙞𝙣 𝘽𝙤𝙩 🐬");
+    finalText = hasFooter ? text : text + footer;
+  } else if (m.quoted) {
+    finalText = m.quoted.text || "";
+  }
+
+  if (!finalText && !m.quoted) {
+    return conn.reply(
+      m.chat,
+      `🚩 Ingrese un texto o responda a un mensaje`,
+      m,
+      rcanal
+    );
+  }
+
   try {
     let users = participants.map((u) => conn.decodeJid(u.id));
     let q = m.quoted ? m.quoted : m || m.text || m.sender;
@@ -39,15 +51,18 @@ var handler = async (m, { conn, text, participants, isOwner, isAdmin }) => {
     let isMedia = /image|video|sticker|audio/.test(mime);
     let more = String.fromCharCode(8206);
     let masss = more.repeat(850);
-    let htextos = `${finalText ? finalText : "*Hola!!*" + footer}`;
-    if (isMedia && quoted.mtype === "imageMessage" && htextos) {
+
+    // Usar el texto del mensaje citado si no hay texto personalizado
+    let htextos = finalText || quoted.text || "*Hola!!*" + footer;
+
+    if (isMedia && quoted.mtype === "imageMessage") {
       var mediax = await quoted.download?.();
       conn.sendMessage(
         m.chat,
-        { image: mediax, mentions: users, caption: htextos, mentions: users },
+        { image: mediax, mentions: users, caption: htextos },
         { quoted: null }
       );
-    } else if (isMedia && quoted.mtype === "videoMessage" && htextos) {
+    } else if (isMedia && quoted.mtype === "videoMessage") {
       var mediax = await quoted.download?.();
       conn.sendMessage(
         m.chat,
@@ -59,7 +74,7 @@ var handler = async (m, { conn, text, participants, isOwner, isAdmin }) => {
         },
         { quoted: null }
       );
-    } else if (isMedia && quoted.mtype === "audioMessage" && htextos) {
+    } else if (isMedia && quoted.mtype === "audioMessage") {
       var mediax = await quoted.download?.();
       conn.sendMessage(
         m.chat,
@@ -71,7 +86,7 @@ var handler = async (m, { conn, text, participants, isOwner, isAdmin }) => {
         },
         { quoted: null }
       );
-    } else if (isMedia && quoted.mtype === "stickerMessage" && htextos) {
+    } else if (isMedia && quoted.mtype === "stickerMessage") {
       var mediax = await quoted.download?.();
       conn.sendMessage(
         m.chat,
@@ -97,10 +112,12 @@ var handler = async (m, { conn, text, participants, isOwner, isAdmin }) => {
     }
   }
 };
+
 handler.help = ["hidetag"];
 handler.tags = ["grupo"];
 handler.command = ["n", "hidetag", "notificar", "tag", "t"];
 handler.group = true;
 handler.admin = true;
 handler.register = true;
+
 export default handler;
