@@ -76,7 +76,7 @@ handler.all = async function (m) {
   let canal2 = 'https://whatsapp.com/channel/0029VbAfBzIKGGGKJWp5tT3L'
   var git = 'https://github.com/CARLOSGRCIAGRCIA' 
   var youtube = '' 
-  var github = 'https://github.com/thecarlos19/black-clover-MD' 
+  var github = 'https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2' 
   let correo = 'carlosgarciagarcia3c@gmail.com'
   global.redes = pickRandom([canal, git, github, correo])
 
@@ -115,7 +115,7 @@ handler.all = async function (m) {
     'https://files.catbox.moe/nvjw2u.png',
   ])
 
-  global.rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: 100, newsletterName: channelRD.name }, externalAdReply: { showAdAttribution: true, title: "𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 ☘", body: "𝐓𝐇𝐄 𝐂𝐀𝐑𝐋𝐎𝐒", mediaUrl: null, description: null, previewType: "PHOTO", thumbnailUrl: icono, sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, } }
+  global.rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: 100, newsletterName: channelRD.name }, externalAdReply: { showAdAttribution: true, title: "𝕯𝕺𝕷𝕻𝕳𝕴𝕹 𝕭𝕺𝕿 ☘", body: "𝕮𝕬𝕽𝕷𝕺𝕾 𝕲", mediaUrl: null, description: null, previewType: "PHOTO", thumbnailUrl: icono, sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, } }
 
 }
 

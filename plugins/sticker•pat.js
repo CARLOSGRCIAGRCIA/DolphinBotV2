@@ -71,7 +71,7 @@ let handler = async (m, { conn, text }) => {
   );
 
   let buffer = await image.getBufferAsync(Jimp.MIME_PNG);
-  let stiker = await sticker(buffer, false, '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗', 'The Carlos 👑');
+  let stiker = await sticker(buffer, false, '𝕯𝕺𝕷𝕻𝕳𝕴𝕹 𝕭𝕺𝕿', 'Carlos G');
 
   if (!stiker) return m.reply("❌ No se pudo generar el sticker.");
 
@@ -81,8 +81,8 @@ let handler = async (m, { conn, text }) => {
   if (imgFiles.length > 0) {
     contextInfo = {
       externalAdReply: {
-        title: '𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 | Patricio 👻',
-        body: 'Dev • The Carlos 👑',
+        title: '𝕯𝕺𝕷𝕻𝕳𝕴𝕹 𝕭𝕺𝕿 | Patricio 👻',
+        body: 'Dev • Carlos G',
         mediaType: 2,
         thumbnail: fs.readFileSync(path.join(imgFolder, imgFiles[0]))
       }

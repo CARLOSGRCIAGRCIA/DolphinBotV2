@@ -122,7 +122,7 @@ let handler = async (m, { conn, usedPrefix }) => {
         title: menuMedia.menuTitle || '𝖣𝗈𝗅𝗉𝗁𝗂𝗇 𝖡𝗈𝗍 || 𝖵𝟣',
         body: 'ִ┊𝘿𝙚𝙫 || 𝘾𝙖𝙧𝙡𝙤𝙨 𝙂',
         thumbnail: uniqueThumb,
-        sourceUrl: 'https://github.com/thecarlos19/black-clover-MD',
+        sourceUrl: 'https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2',
         mediaType: 1,
         renderLargerThumbnail: true
       }

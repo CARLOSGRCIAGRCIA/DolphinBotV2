@@ -1,9 +1,9 @@
 const handler = async (m, { conn }) => {
   const texto = `
- _*𝕭𝖑𝖆𝖈𝖐 𝕮𝖑𝖔𝖛𝖊𝖗 *_ 🥷
+ _*𝕯𝕺𝕷𝕻𝕳𝕴𝕹 𝕭𝕺𝕿 *_ 🥷
 
 \`\`\`Repositorio OFC:\`\`\`
-https://github.com/thecarlos19/Black-clover-MD 
+https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2 
 
 > 🌟 Deja tu estrellita ayudaría mucho :D
 
