@@ -63,7 +63,7 @@
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
-🌐 **¡PUEDES INSTALAR EL BOT EN ALGÚN [HOSTING](https://panel2.skyultraplus.com/)!**
+🌐 **¡PUEDES INSTALAR EL BOT EN ALGÚN HOSTING!**
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
