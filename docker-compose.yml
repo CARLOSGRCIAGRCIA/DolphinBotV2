@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # DolphinBot con QR Code
+  dolphinbot-qr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dolphinbot:latest
+    container_name: dolphinbot-qr
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TZ=America/Mexico_City
+      - BOT_MODE=qr
+    volumes:
+      - ./Seccion-activas:/app/Seccion-activas
+      - ./src/database:/app/src/database
+      - ./tmp:/app/tmp
+      - bot-logs:/app/logs
+    command: npm run qr
+    stdin_open: true
+    tty: true
+    networks:
+      - dolphin-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - qr
+
+  # DolphinBot con código de emparejamiento
+  dolphinbot-code:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dolphinbot:latest
+    container_name: dolphinbot-code
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TZ=America/Mexico_City
+      - BOT_MODE=code
+    volumes:
+      - ./Seccion-activas:/app/Seccion-activas
+      - ./src/database:/app/src/database
+      - ./tmp:/app/tmp
+      - bot-logs:/app/logs
+    command: npm run code
+    stdin_open: true
+    tty: true
+    networks:
+      - dolphin-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - code
+
+  # DolphinBot normal (start)
+  dolphinbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dolphinbot:latest
+    container_name: dolphinbot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - TZ=America/Mexico_City
+      - BOT_MODE=normal
+    volumes:
+      - ./Seccion-activas:/app/Seccion-activas
+      - ./src/database:/app/src/database
+      - ./tmp:/app/tmp
+      - bot-logs:/app/logs
+    command: npm start
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    networks:
+      - dolphin-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Bot is running')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    profiles:
+      - default
+
+networks:
+  dolphin-network:
+    driver: bridge
+    name: dolphin-network
+
+volumes:
+  bot-logs:
+    driver: local
+    name: dolphinbot-logs

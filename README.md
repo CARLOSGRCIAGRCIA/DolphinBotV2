@@ -75,6 +75,8 @@
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
+## 🚀 Métodos de Instalación
+
 ### 💻 Instalar por Termux
 
 <details>
@@ -156,6 +158,146 @@ grep -q 'bash\|wget' <(dpkg -l) || apt install -y bash wget && wget -O - https:/
 Para que no pierdas tu progreso, estos comandos realizarán un respaldo de tu `database.json` y se agregará a la versión más reciente.
 
 > ⚠️ Warning: Estos comandos solo funcionan para TERMUX, REPLIT, LINUX
+
+</details>
+
+![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+
+### 🐳 Instalar con Docker (Recomendado para Servidores)
+
+<details>
+<summary><b>🐋 Ver comandos para Docker</b></summary>
+
+## 📋 Requisitos
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+## 🚀 Instalación con Docker Compose (Fácil)
+
+```bash
+# Clonar repositorio
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
+cd DolphinBotV2
+```
+
+```bash
+# Construir imagen
+docker compose build
+```
+
+```bash
+# Primera vez - Obtener QR Code
+docker compose --profile qr up
+```
+
+```bash
+# O con código de emparejamiento
+docker compose --profile code up
+```
+
+```bash
+# Después, ejecutar 24/7
+docker compose --profile default up -d
+```
+
+## 🛠️ Comandos Útiles
+
+```bash
+# Ver logs en tiempo real
+docker compose logs -f
+
+# Detener el bot
+docker compose down
+
+# Reiniciar el bot
+docker compose restart
+
+# Actualizar DolphinBot
+docker compose down
+git pull origin main
+docker compose build --no-cache
+docker compose --profile default up -d
+```
+
+## 🐋 Instalación con Docker (Método Manual)
+
+```bash
+# Construir imagen
+docker build -t dolphinbot:latest .
+```
+
+```bash
+# Primera vez - Obtener QR
+docker run -it --rm \
+  --name dolphinbot-qr \
+  -v $(pwd)/Seccion-activas:/app/Seccion-activas \
+  -v $(pwd)/src/database:/app/src/database \
+  -v $(pwd)/tmp:/app/tmp \
+  -e BOT_MODE=qr \
+  dolphinbot:latest npm run qr
+```
+
+```bash
+# Ejecutar 24/7
+docker run -d \
+  --name dolphinbot \
+  --restart unless-stopped \
+  -v $(pwd)/Seccion-activas:/app/Seccion-activas \
+  -v $(pwd)/src/database:/app/src/database \
+  -v $(pwd)/tmp:/app/tmp \
+  -p 3000:3000 \
+  dolphinbot:latest
+```
+
+## 📊 Comandos de Gestión
+
+```bash
+# Ver logs
+docker logs -f dolphinbot
+
+# Detener
+docker stop dolphinbot
+
+# Iniciar
+docker start dolphinbot
+
+# Reiniciar
+docker restart dolphinbot
+
+# Ver estado
+docker ps | grep dolphin
+
+# Eliminar contenedor
+docker rm -f dolphinbot
+```
+
+## 🔄 Obtener Nuevo QR Code
+
+```bash
+# Con Docker Compose
+docker compose down
+rm -rf Seccion-activas/*
+docker compose --profile qr up
+
+# Con Docker directo
+docker stop dolphinbot
+docker rm dolphinbot
+rm -rf Seccion-activas/*
+docker run -it --rm ... (comando de QR)
+```
+
+## 💾 Hacer Backup
+
+```bash
+tar -czf dolphin-backup-$(date +%Y%m%d).tar.gz Seccion-activas/ src/database/
+```
+
+## ✨ Ventajas de Docker
+- ✅ Fácil instalación
+- ✅ Aislado del sistema
+- ✅ Auto-reinicio si falla
+- ✅ Portátil entre servidores
+- ✅ Fácil actualización
 
 </details>
 
