@@ -1,28 +1,25 @@
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-
-
-<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=0000FF&center=falso&vCenter=falso&lines=🜛+𝐁𝐋𝐀𝐂𝐊+𝐂𝐋𝐎𝐕𝐄𝐑+𝐕777+🜛;۞+𝐎𝐅𝐂+𝐔𝐏𝐃𝐀𝐓𝐄+۞;@Thecarlos✞">
-
-
+<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=00CED1&center=false&vCenter=false&lines=🐬+𝐃𝐎𝐋𝐏𝐇𝐈𝐍+𝐁𝐎𝐓+𝐕2+🐬;🌊+𝐎𝐅𝐂+𝐔𝐏𝐃𝐀𝐓𝐄+🌊;@Carlos.grcia">
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
 **No olvides dejar tu estrellita 🌟**
 
-> 👑 **El mejor Bot de WhatsApp ⚔️**
+> 🐬 **El Bot de WhatsApp más inteligente 🌊**
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
-<h1 align="center">Black - Clover</h1>
+<h1 align="center">🐬 DolphinBot V2 🐬</h1>
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/El-brayan502/dat4/main/uploads/08a0b4-1766850024895.jpg" width="300" alt="Black Clover">
+  <img src="https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/src/img/Dolphin.png" width="300" alt="DolphinBot">
 </p>
 
 <p align="center">
-  <a href="https://wa.me/525544876071">
-    <img title="Autor" src="https://img.shields.io/badge/CARLOS OFC-black?style=for-the-badge&logo=whatsapp">
+  <a href="https://wa.me/529516526675">
+    <img title="Autor" src="https://img.shields.io/badge/CARLOS OFC-00CED1?style=for-the-badge&logo=whatsapp">
   </a>
-  <a href="https://instagram.com/_carlitos.zx">
-    <img title="Instagram del creador" src="https://img.shields.io/badge/@_carlitos.zx-purple?style=for-the-badge&logo=instagram">
+  <a href="https://instagram.com/carlos.gxv">
+    <img title="Instagram del creador" src="https://img.shields.io/badge/@carlos.gxv-E4405F?style=for-the-badge&logo=instagram">
   </a>
 </p>
 
@@ -31,33 +28,38 @@
 ### ℹ️ Información importante
 
 <details>
-<summary><b>📘 ✞ Info Bot</b></summary>
+<summary><b>📘 🐬 Info Bot</b></summary>
 
 * Este proyecto **no está afiliado de ninguna manera** con `WhatsApp`. `WhatsApp` es una marca registrada de `WhatsApp LLC`, y este bot es un **desarrollo independiente** que **no tiene ninguna relación oficial con la compañía**.
+
+* **DolphinBot V2** es un bot inteligente y poderoso, diseñado para llevar la experiencia de WhatsApp a otro nivel 🌊
+
 </details>
 
 <details>
-<summary><b>⚙️ ✞ Funciones</b></summary>
+<summary><b>⚙️ 🐬 Funciones</b></summary>
 
-> El bot todavía está en desarrollo. Si presenta alguna falla, repórtala al creador para darle una solución.
+> El bot está en constante desarrollo. Si presenta alguna falla, repórtala al creador para darle una solución rápida.
 
 - [x] Interacción con voz y texto
-- [x] Configuración de grupo
-- [x] Antidelete, antilink, antispam, etc.
-- [x] Bienvenida personalizada
-- [x] Juegos: tictactoe, matemáticas, etc.
-- [x] Chatbot (SimSimi)
-- [x] Chatbot (Auto-responder)
-- [x] Crear sticker de imagen/video/gif/URL
-- [x] SubBot (Jadibot)
-- [x] Buscador Google
-- [x] Juego RPG
-- [x] Personalizar imagen del menú
+- [x] Configuración avanzada de grupos
+- [x] Antidelete, antilink, antispam, antiviewonce
+- [x] Bienvenida personalizada con imágenes
+- [x] Juegos: tictactoe, matemáticas, trivia, etc.
+- [x] Chatbot inteligente (SimSimi)
+- [x] Auto-responder personalizado
+- [x] Crear stickers de imagen/video/gif/URL
+- [x] SubBot (Jadibot) - Códigos QR ilimitados
+- [x] Buscador Google avanzado
+- [x] Sistema RPG completo
+- [x] Menú personalizable con múltiples estilos
 - [x] Descarga de música y video de YouTube
-- [ ] Otros en desarrollo
+- [x] Descarga de TikTok, Instagram, Facebook
+- [x] Convertidor de formatos
+- [x] IA integrada para conversaciones
+- [ ] Más funciones en desarrollo
 
 </details>
-
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
@@ -66,8 +68,9 @@
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
 ### 📲 Click en la imagen para obtener Termux
+
 <a href="https://www.mediafire.com/file/3hsvi3xkpq3a64o/termux_118.a">
-  <img src="https://qu.ax/finc.jpg" height="125px">
+  <img src="https://files.catbox.moe/m850sl.webp" height="125px">
 </a>
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
@@ -75,23 +78,26 @@
 ### 💻 Instalar por Termux
 
 <details>
-<summary><b>📲  Ver comandos para Termux</b></summary>
+<summary><b>📲 Ver comandos para Termux</b></summary>
 
 ## 🚀 Instalación Rápida
 
 ```bash
 termux-setup-storage
 ```
+
 ```bash
 apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
-```bash
-git clone https://github.com/thecarlos19/black-clover-MD 
 
-```
 ```bash
-cd black-clover-MD 
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
 ```
+
+```bash
+cd DolphinBotV2
+```
+
 ```bash
 npm install
 ```
@@ -100,7 +106,8 @@ npm install
 npm start
 ```
 
-> *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** use la letra **"y"** y luego **"ENTER"** para continuar con la instalación del mejor bot.*
+> *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** usa la letra **"y"** y luego **"ENTER"** para continuar con la instalación.*
+
 </details>
 
 <details>
@@ -111,42 +118,45 @@ cd
 ```
 
 ```bash
-cd black-clover-MD
+cd DolphinBotV2
 ```
 
 ```bash
 npm start
 ```
 
-🧿 **`OBTENER OTRO CODIGO QR`**
-
+### 🧿 **OBTENER OTRO CODIGO QR**
 >ESCRIBE LOS SIGUIENTES COMANDOS UNO POR UNO
 
 ```bash
-cd black-clover-MD
+cd DolphinBotV2
 ```
 
 ```bash
 rm -rf Seccion-activas
 ```
+
 ```bash
 npm start
 ```
 
-🔮 **`ACTIVAR 24/7 EN  TERMUX`**
+### 🔮 **ACTIVAR 24/7 EN TERMUX**
+
 ```bash
 termux-wake-lock && npm i -g pm2 && pm2 start index.js && pm2 save && pm2 logs 
 ```
 
-📤 **`ACTUALIZAR BLACK CLOVER`**
-> Comandos para actualizar BLACK CLOVER de forma automática en termux 
+### 📤 **ACTUALIZAR DOLPHINBOT**
+> Comandos para actualizar DolphinBot de forma automática en Termux 
 
 ```bash
-grep -q 'bash\|wget' <(dpkg -l) || apt install -y bash wget && wget -O - https://raw.githubusercontent.com/thecarlos19/black-clover-MD'/master/termux.sh | bash
+grep -q 'bash\|wget' <(dpkg -l) || apt install -y bash wget && wget -O - https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/termux.sh | bash
 ```
-Para que no pierda su progreso, estos comandos realizarán un respaldo de su `database.json` y se agregará a la versión más reciente.
 
-> Warning Estos comandos solo funcionan para TERMUX, REPLIT, LINUX
+Para que no pierdas tu progreso, estos comandos realizarán un respaldo de tu `database.json` y se agregará a la versión más reciente.
+
+> ⚠️ Warning: Estos comandos solo funcionan para TERMUX, REPLIT, LINUX
+
 </details>
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
@@ -154,14 +164,14 @@ Para que no pierda su progreso, estos comandos realizarán un respaldo de su `da
 ### ☁️ Instalar desde Cloud Shell
 
 <details>
-<summary><b>🌀  Ver comandos para Cloud Shell</b></summary>
+<summary><b>🌀 Ver comandos para Cloud Shell</b></summary>
 
 ```bash
 apt update && apt upgrade
 ```
 
 ```bash
-git clone https://github.com/thecarlos19/black-clover-MD && cd black-clover-MD
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2 && cd DolphinBotV2
 ```
 
 ```bash
@@ -172,26 +182,26 @@ yarn install && npm install
 npm start
 ```
 
-✅ ¡Bot listo para usarse! El mejor bot de WhatsApp 🥷
+✅ ¡Bot listo para usarse! El mejor bot de WhatsApp 🐬
+
 </details>
 
-
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-
 
 ## 🔗 Enlaces oficiales
 
 | APP | TIPO | ENLACE |
 |------|-------------|--------|
-| 📱 WhatsApp Canal Oficial | Noticias y actualizaciones | [¡Aquí!](https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04) |
-| 👥 Grupo de Soporte | Comunidad y ayuda | [¡Aquí!](https://chat.whatsapp.com/HBJ8BniXgtNHfiLQFKwrcV?mode=wwt) |
+| 📱 Canal Oficial Instagram | Noticias y actualizaciones | [¡Aquí!](https://www.instagram.com/carlos.gxv/) |
+| 👥 Grupo de Soporte | Comunidad y ayuda | [¡Aquí!](https://chat.whatsapp.com/EdND7QAHE9w0XPYGx2ZfQw) |
+| 💬 WhatsApp del Creador | Contacto directo | [¡Aquí!](https://wa.me/529516526675) |
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
 ## 👤 Creador del proyecto
 
-<a href="https://github.com/thecarlos19">
-  <img src="https://github.com/thecarlos19.png" width="250" height="250" alt="thecarlos19"/>
+<a href="https://github.com/CARLOSGRCIAGRCIA">
+  <img src="https://github.com/CARLOSGRCIAGRCIA.png" width="250" height="250" alt="CARLOSGRCIAGRCIA"/>
 </a>
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
@@ -199,16 +209,33 @@ npm start
 ### 🌐 Redes sociales del creador
 
 <p align="center">
-  <a href="https://instagram.com/_carlitos.zx" target="_blank">
-    <img src="https://img.shields.io/badge/Instagram-%40_carlitos.zx-purple?style=for-the-badge&logo=instagram">
+  <a href="https://instagram.com/carlos.gxv" target="_blank">
+    <img src="https://img.shields.io/badge/Instagram-%40carlos.gxv-E4405F?style=for-the-badge&logo=instagram">
   </a>
-  <a href="https://www.tiktok.com/@_carlitos.zx" target="_blank">
-    <img src="https://img.shields.io/badge/TikTok-%40_thecarlos.ok-black?style=for-the-badge&logo=tiktok">
+  <a href="https://www.tiktok.com/@carlos.grcia0" target="_blank">
+    <img src="https://img.shields.io/badge/TikTok-%40carlos.grcia0-000000?style=for-the-badge&logo=tiktok">
+  </a>
+  <a href="https://wa.me/529516526675" target="_blank">
+    <img src="https://img.shields.io/badge/WhatsApp-Contacto-25D366?style=for-the-badge&logo=whatsapp">
   </a>
 </p>
 
 ![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
 
-🔋 *Powered by* [**The Legends** ⚡](https://whatsapp.com/channel/0029VbB36XC8aKvQevh8Bp04)
+### 💎 Agradecimientos especiales
 
-<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=0000FF&center=falso&vCenter=falso&lines=✞+𝐁𝐋𝐀𝐂𝐊+𝐂𝐋𝐎𝐕𝐄𝐑+𝐒𝐘𝐒𝐓𝐄𝐌+֎">
+<p align="center">
+  <i>Gracias a todos los que apoyan este proyecto y lo hacen crecer cada día 🐬</i>
+</p>
+
+![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+
+🐬 *Powered by* [**DolphinBot Team** 🌊](https://www.instagram.com/carlos.gxv/)
+
+<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=00CED1&center=false&vCenter=false&lines=🐬+𝐃𝐎𝐋𝐏𝐇𝐈𝐍+𝐁𝐎𝐓+𝐒𝐘𝐒𝐓𝐄𝐌+🐬">
+
+---
+
+<p align="center">
+  <b>⭐ Si te gusta el proyecto, no olvides dejar tu estrella ⭐</b>
+</p>
