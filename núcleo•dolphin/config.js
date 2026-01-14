@@ -10,12 +10,12 @@ import moment from 'moment-timezone';
 //*─✞─ CONFIGURACIÓN GLOBAL ─✞─*
 
 // BETA: Número del bot
-global.botNumber = ''; // Ejemplo: 525568138672
+global.botNumber = ''; // Ejemplo: 521234567890
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.owner = [
   ['5219516526675', '🜲 𝗖𝗿𝗲𝗮𝗱𝗼𝗿 👻', true],
   ['5217971289909'],
-  ['5217971282613', '', false], // Espacios opcionales
+  ['5217971282613', '', false],
   ['573244278232', 'neji.x.s', true],
   ['', '', false]
 ];
@@ -49,7 +49,7 @@ global.igfg = '𝘾𝘼𝙍𝙇𝙊𝙎 𝙂'
 global.botname = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬'
 global.dev = '© ⍴᥆ᥕᥱrᥱძ ᑲᥡ the Legends '
 global.textbot = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 𝙭 𝘾𝘼𝙍𝙇𝙊𝙎 𝙂'
-global.gt = '͟͞𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬͟͞';
+global.gt = '͟͞𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬͟͞';
 global.namechannel = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 𝙭 𝘾𝘼𝙍𝙇𝙊𝙎 𝙂'
 // Moneda interna
 global.monedas = 'monedas';
@@ -102,6 +102,36 @@ global.moment = moment;
 
 global.multiplier = 69;
 global.maxwarn = 3;
+
+global.APIKeys = global.APIKeys || {};
+global.APIs = global.APIs || {};
+
+//*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
+
+global.cacheTimeout = 1000 * 60 * 5;
+global.groupMetadataCache = new Map();
+
+global.lidCache = new Map();
+
+global.dbWritePending = false;
+
+global.lastBio = null;
+
+setInterval(() => {
+  if (global.groupMetadataCache && global.groupMetadataCache.size > 0) {
+    global.groupMetadataCache.clear();
+    console.log(chalk.cyan('[CACHE] Metadata de grupos limpiada'));
+  }
+  
+  if (global.lidCache && global.lidCache.size > 500) {
+    const entries = Array.from(global.lidCache.entries());
+    global.lidCache.clear();
+    entries.slice(-500).forEach(([key, value]) => {
+      global.lidCache.set(key, value);
+    });
+    console.log(chalk.cyan('[CACHE] LID cache optimizado'));
+  }
+}, 10 * 60 * 1000);
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 const file = fileURLToPath(import.meta.url);

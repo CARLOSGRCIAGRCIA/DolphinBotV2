@@ -17,15 +17,20 @@ export async function handler(chatUpdate) {
   this.msgqueque ||= [];
   this.uptime ||= Date.now();
   if (!chatUpdate) return;
+  
   this.pushMessage(chatUpdate.messages).catch(console.error);
 
   let m = chatUpdate.messages[chatUpdate.messages.length - 1];
   if (!m) return;
+  
   if (!global.db.data) await global.loadDatabase();
 
   try {
     m = smsg(this, m) || m;
     if (!m) return;
+    
+    if (m.isBaileys) return;
+    
     global.mconn = m;
     m.exp = 0;
     m.monedas = false;
@@ -35,77 +40,72 @@ export async function handler(chatUpdate) {
       if (!user || typeof user !== "object")
         global.db.data.users[m.sender] = user = {};
 
-      Object.assign(user, {
-        exp: isNumber(user.exp) ? user.exp : 0,
-        monedas: isNumber(user.monedas) ? user.monedas : 10,
-        joincount: isNumber(user.joincount) ? user.joincount : 1,
-        diamond: isNumber(user.diamond) ? user.diamond : 3,
-        lastadventure: isNumber(user.lastadventure) ? user.lastadventure : 0,
-        lastclaim: isNumber(user.lastclaim) ? user.lastclaim : 0,
-        health: isNumber(user.health) ? user.health : 100,
-        crime: isNumber(user.crime) ? user.crime : 0,
-        lastcofre: isNumber(user.lastcofre) ? user.lastcofre : 0,
-        lastdiamantes: isNumber(user.lastdiamantes) ? user.lastdiamantes : 0,
-        lastpago: isNumber(user.lastpago) ? user.lastpago : 0,
-        lastcode: isNumber(user.lastcode) ? user.lastcode : 0,
-        lastcodereg: isNumber(user.lastcodereg) ? user.lastcodereg : 0,
-        lastduel: isNumber(user.lastduel) ? user.lastduel : 0,
-        lastmining: isNumber(user.lastmining) ? user.lastmining : 0,
-        muto: "muto" in user ? user.muto : false,
-        premium: "premium" in user ? user.premium : false,
-        premiumTime: user.premium ? user.premiumTime || 0 : 0,
-        registered: "registered" in user ? user.registered : false,
-        genre: user.genre || "",
-        birth: user.birth || "",
-        marry: user.marry || "",
-        description: user.description || "",
-        packstickers: user.packstickers || null,
-        name: user.name || m.name,
-        age: isNumber(user.age) ? user.age : -1,
-        regTime: isNumber(user.regTime) ? user.regTime : -1,
-        afk: isNumber(user.afk) ? user.afk : -1,
-        afkReason: user.afkReason || "",
-        role: user.role || "Nuv",
-        banned: "banned" in user ? user.banned : false,
-        useDocument: "useDocument" in user ? user.useDocument : false,
-        level: isNumber(user.level) ? user.level : 0,
-        bank: isNumber(user.bank) ? user.bank : 0,
-        warn: isNumber(user.warn) ? user.warn : 0,
-      });
+      if (!isNumber(user.exp)) user.exp = 0;
+      if (!isNumber(user.monedas)) user.monedas = 10;
+      if (!isNumber(user.joincount)) user.joincount = 1;
+      if (!isNumber(user.diamond)) user.diamond = 3;
+      if (!isNumber(user.lastadventure)) user.lastadventure = 0;
+      if (!isNumber(user.lastclaim)) user.lastclaim = 0;
+      if (!isNumber(user.health)) user.health = 100;
+      if (!isNumber(user.crime)) user.crime = 0;
+      if (!isNumber(user.lastcofre)) user.lastcofre = 0;
+      if (!isNumber(user.lastdiamantes)) user.lastdiamantes = 0;
+      if (!isNumber(user.lastpago)) user.lastpago = 0;
+      if (!isNumber(user.lastcode)) user.lastcode = 0;
+      if (!isNumber(user.lastcodereg)) user.lastcodereg = 0;
+      if (!isNumber(user.lastduel)) user.lastduel = 0;
+      if (!isNumber(user.lastmining)) user.lastmining = 0;
+      if (!("muto" in user)) user.muto = false;
+      if (!("premium" in user)) user.premium = false;
+      if (user.premium && !user.premiumTime) user.premiumTime = 0;
+      if (!("registered" in user)) user.registered = false;
+      if (!user.genre) user.genre = "";
+      if (!user.birth) user.birth = "";
+      if (!user.marry) user.marry = "";
+      if (!user.description) user.description = "";
+      if (!user.packstickers) user.packstickers = null;
+      if (!user.name) user.name = m.name;
+      if (!isNumber(user.age)) user.age = -1;
+      if (!isNumber(user.regTime)) user.regTime = -1;
+      if (!isNumber(user.afk)) user.afk = -1;
+      if (!user.afkReason) user.afkReason = "";
+      if (!user.role) user.role = "Nuv";
+      if (!("banned" in user)) user.banned = false;
+      if (!("useDocument" in user)) user.useDocument = false;
+      if (!isNumber(user.level)) user.level = 0;
+      if (!isNumber(user.bank)) user.bank = 0;
+      if (!isNumber(user.warn)) user.warn = 0;
 
       let chat = global.db.data.chats[m.chat];
       if (!chat || typeof chat !== "object")
         global.db.data.chats[m.chat] = chat = {};
-      Object.assign(chat, {
-        isBanned: "isBanned" in chat ? chat.isBanned : false,
-        sAutoresponder: chat.sAutoresponder || "",
-        welcome: "welcome" in chat ? chat.welcome : true,
-        autolevelup: "autolevelup" in chat ? chat.autolevelup : false,
-        autoAceptar: "autoAceptar" in chat ? chat.autoAceptar : true,
-        autosticker: "autosticker" in chat ? chat.autosticker : false,
-        autoRechazar: "autoRechazar" in chat ? chat.autoRechazar : true,
-        autoresponder: "autoresponder" in chat ? chat.autoresponder : false,
-        detect: "detect" in chat ? chat.detect : true,
-        antiBot: "antiBot" in chat ? chat.antiBot : true,
-        antiBot2: "antiBot2" in chat ? chat.antiBot2 : true,
-        modoadmin: "modoadmin" in chat ? chat.modoadmin : false,
-        antiLink: "antiLink" in chat ? chat.antiLink : true,
-        reaction: "reaction" in chat ? chat.reaction : false,
-        nsfw: "nsfw" in chat ? chat.nsfw : false,
-        antifake: "antifake" in chat ? chat.antifake : false,
-        delete: "delete" in chat ? chat.delete : false,
-        expired: isNumber(chat.expired) ? chat.expired : 0,
-      });
+      
+      if (!("isBanned" in chat)) chat.isBanned = false;
+      if (!chat.sAutoresponder) chat.sAutoresponder = "";
+      if (!("welcome" in chat)) chat.welcome = true;
+      if (!("autolevelup" in chat)) chat.autolevelup = false;
+      if (!("autoAceptar" in chat)) chat.autoAceptar = true;
+      if (!("autosticker" in chat)) chat.autosticker = false;
+      if (!("autoRechazar" in chat)) chat.autoRechazar = true;
+      if (!("autoresponder" in chat)) chat.autoresponder = false;
+      if (!("detect" in chat)) chat.detect = true;
+      if (!("antiBot" in chat)) chat.antiBot = true;
+      if (!("antiBot2" in chat)) chat.antiBot2 = true;
+      if (!("modoadmin" in chat)) chat.modoadmin = false;
+      if (!("antiLink" in chat)) chat.antiLink = true;
+      if (!("reaction" in chat)) chat.reaction = false;
+      if (!("nsfw" in chat)) chat.nsfw = false;
+      if (!("antifake" in chat)) chat.antifake = false;
+      if (!("delete" in chat)) chat.delete = false;
+      if (!isNumber(chat.expired)) chat.expired = 0;
 
       var settings = global.db.data.settings[this.user.jid] || {};
-      Object.assign(settings, {
-        self: "self" in settings ? settings.self : false,
-        restrict: "restrict" in settings ? settings.restrict : true,
-        jadibotmd: "jadibotmd" in settings ? settings.jadibotmd : true,
-        antiPrivate: "antiPrivate" in settings ? settings.antiPrivate : false,
-        autoread: "autoread" in settings ? settings.autoread : false,
-        status: settings.status || 0,
-      });
+      if (!("self" in settings)) settings.self = false;
+      if (!("restrict" in settings)) settings.restrict = true;
+      if (!("jadibotmd" in settings)) settings.jadibotmd = true;
+      if (!("antiPrivate" in settings)) settings.antiPrivate = false;
+      if (!("autoread" in settings)) settings.autoread = false;
+      if (!settings.status) settings.status = 0;
       global.db.data.settings[this.user.jid] = settings;
     } catch (e) {
       console.error(e);
@@ -115,30 +115,49 @@ export async function handler(chatUpdate) {
     globalThis.setting = global.db.data.settings[this.user.jid];
 
     const detectwhat = m.sender.includes("@lid") ? "@lid" : "@s.whatsapp.net";
-    const isROwner = [...global.owner.map(([number]) => number)]
+    const isROwner = [...(global.owner || []).map(([number]) => number)]
       .map((v) => v.replace(/\D/g, "") + detectwhat)
       .includes(m.sender);
     const isOwner = isROwner || m.fromMe;
     const isPrems = isROwner || global.db.data.users[m.sender].premiumTime > 0;
 
+    const isMods = global.mods ? global.mods.map(v => v.replace(/\D/g, "") + detectwhat).includes(m.sender) : false;
+
     if (opts["queque"] && m.text && !isMods) {
       const queque = this.msgqueque;
       const previousID = queque[queque.length - 1];
       queque.push(m.id || m.key.id);
+      
+      if (queque.length > 100) queque.shift();
+      
       setInterval(async () => {
         if (!queque.includes(previousID)) clearInterval(this);
         await delay(5000);
       }, 5000);
     }
-    if (m.isBaileys) return;
+    
     m.exp += Math.ceil(Math.random() * 10);
     let usedPrefix;
     let _user = global.db.data.users[m.sender];
 
     async function getLidFromJid(id, conn) {
       if (id.endsWith("@lid")) return id;
+      
+      if (!conn.lidCache) conn.lidCache = new Map();
+      
+      if (conn.lidCache.has(id)) return conn.lidCache.get(id);
+      
       const res = await conn.onWhatsApp(id).catch(() => []);
-      return res[0]?.lid || id;
+      const lid = res[0]?.lid || id;
+      
+      conn.lidCache.set(id, lid);
+      
+      if (conn.lidCache.size > 1000) {
+        const firstKey = conn.lidCache.keys().next().value;
+        conn.lidCache.delete(firstKey);
+      }
+      
+      return lid;
     }
 
     const senderLid = await getLidFromJid(m.sender, conn);
@@ -147,9 +166,17 @@ export async function handler(chatUpdate) {
     const botJid = conn.user.jid;
 
     const groupMetadata = m.isGroup
-      ? (conn.chats[m.chat] || {}).metadata ||
-        (await this.groupMetadata(m.chat).catch(() => null))
+      ? (this.groupMetadataCache?.[m.chat] || 
+         (this.groupMetadataCache = this.groupMetadataCache || {},
+          this.groupMetadataCache[m.chat] = await this.groupMetadata(m.chat).catch(() => null),
+          setTimeout(() => {
+            if (this.groupMetadataCache?.[m.chat]) {
+              delete this.groupMetadataCache[m.chat];
+            }
+          }, 5 * 60 * 1000),
+          this.groupMetadataCache[m.chat]))
       : {};
+    
     const participants = (() => {
       if (!m.isGroup || !groupMetadata) return [];
       if (
@@ -181,6 +208,7 @@ export async function handler(chatUpdate) {
       path.dirname(fileURLToPath(import.meta.url)),
       "./plugins"
     );
+    
     for (let name in global.plugins) {
       let plugin = global.plugins[name];
       if (!plugin || plugin.disabled) continue;
@@ -253,6 +281,7 @@ export async function handler(chatUpdate) {
               : plugin.command === command;
 
         global.comando = command;
+        
         if (
           m.id.startsWith("NJX-") ||
           (m.id.startsWith("BAE5") && m.id.length === 16) ||
@@ -264,6 +293,7 @@ export async function handler(chatUpdate) {
         m.plugin = name;
         let chat = global.db.data.chats[m.chat];
         let user = global.db.data.users[m.sender];
+        
         if (
           !["grupo-unbanchat.js", "owner-exec.js", "owner-exec2.js"].includes(
             name
@@ -272,6 +302,7 @@ export async function handler(chatUpdate) {
           !isROwner
         )
           return;
+          
         if (m.text && user.banned && !isROwner) {
           m.reply(
             `《✦》Estas baneado/a, no puedes usar comandos en este bot!\n\n${user.bannedReason ? `✰ *Motivo:* ${user.bannedReason}` : "✰ *Motivo:* Sin Especificar"}\n\n> ✧ Si este Bot es cuenta oficial y tiene evidencia que respalde que este mensaje es un error, puedes exponer tu caso con un moderador.`
@@ -279,10 +310,11 @@ export async function handler(chatUpdate) {
           return;
         }
 
-        let adminMode = global.db.data.chats[m.chat].modoadmin;
-        let mini = `${plugins.botAdmin || plugins.admin || plugins.group || plugins || noPrefix || hl || m.text.slice(0, 1) == hl || plugins.command}`;
+        let adminMode = global.db.data.chats[m.chat]?.modoadmin || false;
+        let mini = `${plugin.botAdmin || plugin.admin || plugin.group || plugin || noPrefix || hl || m.text.slice(0, 1) == hl || plugin.command}`;
         if (adminMode && !isOwner && !isROwner && m.isGroup && !isAdmin && mini)
           return;
+          
         if (plugin.rowner && plugin.owner && !(isROwner || isOwner)) {
           fail("owner", m, this);
           continue;
@@ -327,8 +359,11 @@ export async function handler(chatUpdate) {
         m.isCommand = true;
         let xp = "exp" in plugin ? parseInt(plugin.exp) : 10;
         m.exp += xp;
+        
+        const monedasName = global.monedas || 'monedas';
+        
         if (!isPrems && plugin.monedas && _user.monedas < plugin.monedas) {
-          conn.reply(m.chat, `❮✦❯ Se agotaron tus ${monedas}`, m);
+          conn.reply(m.chat, `❮✦❯ Se agotaron tus ${monedasName}`, m);
           continue;
         }
         if (plugin.level > _user.level) {
@@ -369,14 +404,19 @@ export async function handler(chatUpdate) {
         } catch (e) {
           m.error = e;
           let text = format(e);
-          for (let key of Object.values(global.APIKeys))
-            text = text.replace(new RegExp(key, "g"), "Administrador");
+          if (global.APIKeys && typeof global.APIKeys === 'object') {
+            for (let key of Object.values(global.APIKeys)) {
+              if (key) text = text.replace(new RegExp(key, "g"), "Administrador");
+            }
+          }
           m.reply(text);
         } finally {
           if (typeof plugin.after === "function")
             await plugin.after.call(this, m, extra).catch(console.error);
-          if (m.monedas)
-            conn.reply(m.chat, `❮✦❯ Utilizaste ${+m.monedas} ${monedas}`, m);
+          if (m.monedas) {
+            const monedasName = global.monedas || 'monedas';
+            conn.reply(m.chat, `❮✦❯ Utilizaste ${+m.monedas} ${monedasName}`, m);
+          }
         }
         break;
       }
@@ -402,6 +442,10 @@ export async function handler(chatUpdate) {
         });
       utente.exp += m.exp;
       utente.monedas -= m.monedas;
+      
+      if (global.scheduleDbWrite) {
+        global.scheduleDbWrite();
+      }
     }
 
     let stats = global.db.data.stats;
@@ -428,7 +472,10 @@ export async function handler(chatUpdate) {
     } catch (e) {
       console.log(m, m.quoted, e);
     }
-    if (opts["autoread"]) await this.readMessages([m.key]);
+    
+    if (opts["autoread"]) {
+      this.readMessages([m.key]).catch(() => {});
+    }
   }
 }
 
