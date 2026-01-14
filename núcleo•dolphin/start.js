@@ -261,16 +261,42 @@ if (!fs.existsSync(`./${global.sessions}/creds.json`)) {
 conn.isInit = false;
 conn.well = false;
 conn.logger.info(` ✞ H E C H O\n`);
+
 if (!opts["test"]) {
-  if (global.db)
+  if (global.db) {
+    let dbWriteTimeout;
+    let dbPendingWrite = false;
+    
+    global.scheduleDbWrite = () => {
+      if (dbPendingWrite) return;
+      dbPendingWrite = true;
+      
+      clearTimeout(dbWriteTimeout);
+      dbWriteTimeout = setTimeout(async () => {
+        try {
+          if (global.db.data) {
+            await global.db.write();
+            dbPendingWrite = false;
+          }
+        } catch (e) {
+          console.error(e);
+          dbPendingWrite = false;
+        }
+      }, 60000);
+    };
+    
     setInterval(async () => {
-      if (global.db.data) await global.db.write();
-      if (opts["autocleartmp"] && (global.support || {}).find)
-        ((tmp = [os.tmpdir(), "tmp", `${jadi}`]),
-          tmp.forEach((filename) =>
-            cp.spawn("find", [filename, "-amin", "3", "-type", "f", "-delete"])
-          ));
-    }, 30 * 1000);
+      if (global.db.data && !dbPendingWrite) {
+        await global.db.write().catch(console.error);
+      }
+      if (opts["autocleartmp"] && (global.support || {}).find) {
+        const tmpDirs = [tmpdir(), "tmp", `${global.jadi || 'jadibot'}`];
+        tmpDirs.forEach((filename) =>
+          spawn("find", [filename, "-amin", "3", "-type", "f", "-delete"])
+        );
+      }
+    }, 60 * 1000);
+  }
 }
 
 async function connectionUpdate(update) {
@@ -394,21 +420,7 @@ global.reloadHandler = async function (restatConn) {
   conn.connectionUpdate = connectionUpdate.bind(global.conn);
   conn.credsUpdate = saveCreds.bind(global.conn, true);
 
-  // Read messages function created by Brayan
-  conn.ev.on("messages.upsert", async (m) => {
-    if (
-      m.messages &&
-      m.messages[0] &&
-      m.messages[0].key &&
-      m.messages[0].key.remoteJid
-    ) {
-      const jid = m.messages[0].key.remoteJid;
-      await conn.sendPresenceUpdate("composing", jid);
-      await conn.handler(m);
-      await conn.readMessages([m.messages[0].key]);
-      await conn.sendPresenceUpdate("paused", jid);
-    }
-  });
+  conn.ev.on("messages.upsert", conn.handler);
 
   conn.ev.on("connection.update", conn.connectionUpdate);
   conn.ev.on("creds.update", conn.credsUpdate);
@@ -422,9 +434,9 @@ global.rutaJadiBot = join(__dirname, "../núcleo•dolphin/blackJadiBot");
 if (global.blackJadibts) {
   if (!existsSync(global.rutaJadiBot)) {
     mkdirSync(global.rutaJadiBot, { recursive: true });
-    console.log(chalk.bold.cyan(`La carpeta: ${jadi} se creó correctamente.`));
+    console.log(chalk.bold.cyan(`La carpeta: ${global.jadi || 'jadibot'} se creó correctamente.`));
   } else {
-    console.log(chalk.bold.cyan(`La carpeta: ${jadi} ya está creada.`));
+    console.log(chalk.bold.cyan(`La carpeta: ${global.jadi || 'jadibot'} ya está creada.`));
   }
 
   const readRutaJadiBot = readdirSync(global.rutaJadiBot);
@@ -628,24 +640,6 @@ function purgeOldFiles() {
   });
 }
 
-if (!opts["test"]) {
-  if (global.db) {
-    setInterval(async () => {
-      try {
-        if (global.db.data) await global.db.write();
-        if (opts["autocleartmp"] && (global.support || {}).find) {
-          const tmpDirs = [os.tmpdir(), join(process.cwd(), "tmp"), `${jadi}`];
-          tmpDirs.forEach((dir) =>
-            cp.spawn("find", [dir, "-amin", "3", "-type", "f", "-delete"])
-          );
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }, 30000);
-  }
-}
-
 setInterval(
   async () => {
     if (stopped === "close" || !conn || !conn.user) return;
@@ -656,28 +650,20 @@ setInterval(
       )
     );
   },
-  1000 * 60 * 4
+  1000 * 60 * 15
 );
 
 setInterval(
   async () => {
     if (stopped === "close" || !conn || !conn.user) return;
-    await purgeSession();
+    await Promise.all([purgeSession(), purgeSessionSB()]);
     console.log(
       chalk.bold.cyanBright(
         `\n╭» ❍ ${global.sessions} ❍\n│→ SESIONES NO ESENCIALES ELIMINADAS\n╰― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ― ⌫ ♻`
       )
     );
   },
-  1000 * 60 * 10
-);
-
-setInterval(
-  async () => {
-    if (stopped === "close" || !conn || !conn.user) return;
-    await purgeSessionSB();
-  },
-  1000 * 60 * 10
+  1000 * 60 * 20 
 );
 
 setInterval(
@@ -685,7 +671,7 @@ setInterval(
     if (stopped === "close" || !conn || !conn.user) return;
     await purgeOldFiles();
   },
-  1000 * 60 * 10
+  1000 * 60 * 20 
 );
 
 _quickTest()
@@ -699,19 +685,24 @@ setInterval(async () => {
   const _uptime = process.uptime() * 1000;
   const uptime = clockString(_uptime);
   const bio = `🦠 Dolphin-Bot-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`;
-  await conn?.updateProfileStatus(bio).catch((_) => _);
-  if (global.rutaJadiBot) {
-    const bots = readdirSync(global.rutaJadiBot);
-    for (const bot of bots) {
-      const credsPath = join(global.rutaJadiBot, bot, "creds.json");
-      if (existsSync(credsPath)) {
-        try {
-          await conn?.updateProfileStatus(bio).catch((_) => _);
-        } catch {}
+  
+  if (!global.lastBio || global.lastBio !== bio) {
+    await conn?.updateProfileStatus(bio).catch((_) => _);
+    global.lastBio = bio;
+    
+    if (global.rutaJadiBot) {
+      const bots = readdirSync(global.rutaJadiBot);
+      for (const bot of bots) {
+        const credsPath = join(global.rutaJadiBot, bot, "creds.json");
+        if (existsSync(credsPath)) {
+          try {
+            await conn?.updateProfileStatus(bio).catch((_) => _);
+          } catch {}
+        }
       }
     }
   }
-}, 60000);
+}, 120000);
 
 function clockString(ms) {
   const d = isNaN(ms) ? "--" : Math.floor(ms / 86400000);

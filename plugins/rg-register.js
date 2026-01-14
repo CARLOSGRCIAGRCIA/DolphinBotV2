@@ -64,7 +64,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   }
 
   if (user.registered === true) {
-    return conn.sendMessage(m.chat, { text: `⚠️ Ya estás registrado en la manada.\nUsa *${usedPrefix}perfil* para ver tu perfil de delfín.` }, { quoted: m })
+    return conn.sendMessage(m.chat, { text: `⚠️ Ya estás registrado en la manada.\nUsa *${usedPrefix}perfil* para ver tu perfil de delfín, o usa *${usedPrefix}unreg* para borrar el registro actual ` }, { quoted: m })
   }
 
   const regex = /^([a-zA-ZÀ-ÿñÑ\s]+)\.(\d{1,2})$/i
