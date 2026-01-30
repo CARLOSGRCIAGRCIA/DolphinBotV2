@@ -19,6 +19,41 @@ handler.all = async function (m) {
     return { id, name }
   }
 
+  // Función mejorada para fetch con timeout y fallback
+  async function fetchWithTimeout(url, timeout = 5000, fallbackPath = null) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+      const response = await fetch(url, { 
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      return await response.buffer();
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      // Si hay fallback, usarlo
+      if (fallbackPath && fs.existsSync(fallbackPath)) {
+        console.log(`⚠️ Usando imagen local (timeout o error en ${url})`);
+        return fs.readFileSync(fallbackPath);
+      }
+      
+      // Si no hay fallback, retornar null y usar default
+      console.log(`⚠️ Error cargando ${url}: ${error.message}`);
+      return null;
+    }
+  }
+
   global.getBuffer = async function getBuffer(url, options) {
     try {
       options ? options : {}
@@ -31,11 +66,13 @@ handler.all = async function (m) {
           'Upgrade-Insecure-Request': 1
         },
         ...options,
-        responseType: 'arraybuffer'
+        responseType: 'arraybuffer',
+        timeout: 10000 // Agregar timeout de 10 segundos
       })
       return res.data
     } catch (e) {
-      console.log(`Error : ${e}`)
+      console.log(`Error en getBuffer: ${e.message}`)
+      return null
     }
   }
 
@@ -80,13 +117,39 @@ handler.all = async function (m) {
   let correo = 'carlosgarciagarcia3c@gmail.com'
   global.redes = pickRandom([canal, git, github, correo])
 
-  let category = "imagen"
-  const db = './src/database/db.json'
-  const db_ = JSON.parse(fs.readFileSync(db))
-  const random = Math.floor(Math.random() * db_.links[category].length)
-  const randomlink = db_.links[category][random]
-  const response = await fetch(randomlink)
-  const rimg = await response.buffer()
+  // Cargar imagen con manejo de errores
+  let rimg;
+  try {
+    let category = "imagen"
+    const db = './src/database/db.json'
+    
+    if (fs.existsSync(db)) {
+      const db_ = JSON.parse(fs.readFileSync(db))
+      
+      if (db_.links && db_.links[category] && db_.links[category].length > 0) {
+        const random = Math.floor(Math.random() * db_.links[category].length)
+        const randomlink = db_.links[category][random]
+        const response = await fetchWithTimeout(randomlink, 5000, './src/img/Dolphin.png')
+        rimg = response || fs.readFileSync('./src/img/Dolphin.png')
+      } else {
+        // Si no hay links en db.json, usar imagen local
+        rimg = fs.readFileSync('./src/img/Dolphin.png')
+      }
+    } else {
+      // Si no existe db.json, usar imagen local
+      rimg = fs.readFileSync('./src/img/Dolphin.png')
+    }
+  } catch (error) {
+    console.log('⚠️ Error cargando imagen, usando default:', error.message)
+    // Fallback final: usar imagen local
+    try {
+      rimg = fs.readFileSync('./src/img/Dolphin.png')
+    } catch (e) {
+      // Si ni siquiera existe la imagen local, usar buffer vacío
+      rimg = Buffer.from([])
+    }
+  }
+  
   global.icons = rimg
 
   var ase = new Date()
@@ -111,6 +174,7 @@ handler.all = async function (m) {
 
   global.fake = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, newsletterName: channelRD.name, serverMessageId: -1 }, quoted: m } }
 
+  // Icono con fallback
   global.icono = pickRandom([
     'https://files.catbox.moe/nvjw2u.png',
   ])
