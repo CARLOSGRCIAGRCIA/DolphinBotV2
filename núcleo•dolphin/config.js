@@ -11,6 +11,7 @@ import moment from 'moment-timezone';
 
 // BETA: Número del bot
 global.botNumber = ''; // Ejemplo: 521234567890
+
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.owner = [
   ['5219516526675', '🜲 𝗖𝗿𝗲𝗮𝗱𝗼𝗿 👻', true],
@@ -42,6 +43,7 @@ global.packname = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬';
 
 global.author = `
 ♾━━━━━━━━━━━━━━━♾`;
+
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.wm = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬';
 global.titulowm = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬';
@@ -51,6 +53,7 @@ global.dev = '© ⍴᥆ᥕᥱrᥱძ ᑲᥡ the Legends '
 global.textbot = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 𝙭 𝘾𝘼𝙍𝙇𝙊𝙎 𝙂'
 global.gt = '͟͞𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 🐬͟͞';
 global.namechannel = '𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏 𝙭 𝘾𝘼𝙍𝙇𝙊𝙎 𝙂'
+
 // Moneda interna
 global.monedas = 'monedas';
 
@@ -76,9 +79,9 @@ global.estilo = {
   }, 
   message: { 
     orderMessage: { 
-      itemCount : -999999, 
+      itemCount: -999999, 
       status: 1, 
-      surface : 1, 
+      surface: 1, 
       message: global.packname, 
       orderTitle: 'Bang', 
       thumbnail: global.catalogo, 
@@ -108,32 +111,163 @@ global.APIs = global.APIs || {};
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 
-global.cacheTimeout = 1000 * 60 * 5;
-global.groupMetadataCache = new Map();
+// OPTIMIZACIÓN DE CACHÉ
+// Configuración de timeouts y límites de caché
+global.cacheTimeout = 1000 * 60 * 5; // 5 minutos
+global.maxCacheSize = 500; // Límite de elementos en caché
 
-global.lidCache = new Map();
+// Caché de metadata de grupos con gestión mejorada
+class CacheManager {
+  constructor(maxSize = 500, timeout = 5 * 60 * 1000) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+    this.timeout = timeout;
+    this.accessCount = new Map();
+  }
 
+  set(key, value) {
+    // Si el caché está lleno, eliminar el menos usado
+    if (this.cache.size >= this.maxSize) {
+      const leastUsed = Array.from(this.accessCount.entries())
+        .sort((a, b) => a[1] - b[1])[0];
+      if (leastUsed) {
+        this.cache.delete(leastUsed[0]);
+        this.accessCount.delete(leastUsed[0]);
+      }
+    }
+
+    this.cache.set(key, {
+      value,
+      timestamp: Date.now()
+    });
+    this.accessCount.set(key, (this.accessCount.get(key) || 0) + 1);
+  }
+
+  get(key) {
+    const item = this.cache.get(key);
+    if (!item) return null;
+
+    // Verificar si el elemento ha expirado
+    if (Date.now() - item.timestamp > this.timeout) {
+      this.cache.delete(key);
+      this.accessCount.delete(key);
+      return null;
+    }
+
+    this.accessCount.set(key, (this.accessCount.get(key) || 0) + 1);
+    return item.value;
+  }
+
+  has(key) {
+    const item = this.cache.get(key);
+    if (!item) return false;
+    
+    if (Date.now() - item.timestamp > this.timeout) {
+      this.cache.delete(key);
+      this.accessCount.delete(key);
+      return false;
+    }
+    
+    return true;
+  }
+
+  delete(key) {
+    this.accessCount.delete(key);
+    return this.cache.delete(key);
+  }
+
+  clear() {
+    this.cache.clear();
+    this.accessCount.clear();
+  }
+
+  get size() {
+    return this.cache.size;
+  }
+
+  // Limpiar elementos expirados
+  cleanup() {
+    const now = Date.now();
+    for (const [key, item] of this.cache.entries()) {
+      if (now - item.timestamp > this.timeout) {
+        this.cache.delete(key);
+        this.accessCount.delete(key);
+      }
+    }
+  }
+}
+
+// Instanciar caché managers
+global.groupMetadataCache = new CacheManager(500, 5 * 60 * 1000);
+global.lidCache = new CacheManager(1000, 10 * 60 * 1000);
+global.userCache = new CacheManager(1000, 10 * 60 * 1000);
+
+// Variables de control para escritura de DB
 global.dbWritePending = false;
-
 global.lastBio = null;
 
+// Limpieza periódica de caché optimizada
 setInterval(() => {
-  if (global.groupMetadataCache && global.groupMetadataCache.size > 0) {
-    global.groupMetadataCache.clear();
-    console.log(chalk.cyan('[CACHE] Metadata de grupos limpiada'));
+  try {
+    if (global.groupMetadataCache) {
+      const beforeSize = global.groupMetadataCache.size;
+      global.groupMetadataCache.cleanup();
+      const afterSize = global.groupMetadataCache.size;
+      
+      if (beforeSize !== afterSize) {
+        console.log(chalk.cyan(`[CACHE] Metadata de grupos limpiada: ${beforeSize} → ${afterSize}`));
+      }
+    }
+    
+    if (global.lidCache) {
+      const beforeSize = global.lidCache.size;
+      global.lidCache.cleanup();
+      const afterSize = global.lidCache.size;
+      
+      if (beforeSize !== afterSize) {
+        console.log(chalk.cyan(`[CACHE] LID cache limpiado: ${beforeSize} → ${afterSize}`));
+      }
+    }
+
+    if (global.userCache) {
+      const beforeSize = global.userCache.size;
+      global.userCache.cleanup();
+      const afterSize = global.userCache.size;
+      
+      if (beforeSize !== afterSize) {
+        console.log(chalk.cyan(`[CACHE] User cache limpiado: ${beforeSize} → ${afterSize}`));
+      }
+    }
+
+    // Forzar garbage collection si está disponible
+    if (global.gc) {
+      global.gc();
+      console.log(chalk.cyan('[CACHE] Garbage collection ejecutado'));
+    }
+  } catch (error) {
+    console.error(chalk.red('[CACHE] Error en limpieza:'), error);
   }
-  
-  if (global.lidCache && global.lidCache.size > 500) {
-    const entries = Array.from(global.lidCache.entries());
-    global.lidCache.clear();
-    entries.slice(-500).forEach(([key, value]) => {
-      global.lidCache.set(key, value);
-    });
-    console.log(chalk.cyan('[CACHE] LID cache optimizado'));
+}, 10 * 60 * 1000); // Cada 10 minutos
+
+// Limpieza agresiva cada hora
+setInterval(() => {
+  try {
+    if (global.groupMetadataCache) {
+      global.groupMetadataCache.clear();
+      console.log(chalk.yellow('[CACHE] Metadata cache completamente limpiado'));
+    }
+    
+    if (global.userCache) {
+      global.userCache.clear();
+      console.log(chalk.yellow('[CACHE] User cache completamente limpiado'));
+    }
+  } catch (error) {
+    console.error(chalk.red('[CACHE] Error en limpieza agresiva:'), error);
   }
-}, 10 * 60 * 1000);
+}, 60 * 60 * 1000); // Cada hora
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
+
 const file = fileURLToPath(import.meta.url);
 watchFile(file, () => {
   unwatchFile(file);

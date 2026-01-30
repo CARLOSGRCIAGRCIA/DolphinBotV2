@@ -47,12 +47,15 @@ const {
   fetchLatestBaileysVersion,
   makeCacheableSignalKeyStore,
   jidNormalizedUser,
+  PHONENUMBER_MCC,
+  makeCacheableSignalKeyStore: makeSignalKeyStore,
 } = await import("@whiskeysockets/baileys");
 import readline, { createInterface } from "readline";
 import NodeCache from "node-cache";
 const { CONNECTING } = ws;
 const { chain } = lodash;
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000;
+
 protoType();
 serialize();
 
@@ -66,9 +69,11 @@ global.__filename = function filename(
       : pathURL
     : pathToFileURL(pathURL).toString();
 };
+
 global.__dirname = function dirname(pathURL) {
   return path.dirname(global.__filename(pathURL, true));
 };
+
 global.__require = function require(dir = import.meta.url) {
   return createRequire(dir);
 };
@@ -109,39 +114,62 @@ global.db = new Low(
 );
 
 global.DATABASE = global.db;
+
+// Función de carga de base de datos mejorada
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) {
-    return new Promise((resolve) =>
-      setInterval(async function () {
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(async function () {
         if (!global.db.READ) {
-          clearInterval(this);
+          clearInterval(checkInterval);
           resolve(
             global.db.data == null ? global.loadDatabase() : global.db.data
           );
         }
-      }, 1 * 1000)
-    );
+      }, 1 * 1000);
+    });
   }
+  
   if (global.db.data !== null) return;
+  
   global.db.READ = true;
-  await global.db.read().catch(console.error);
-  global.db.READ = null;
-  global.db.data = {
-    users: {},
-    chats: {},
-    stats: {},
-    msgs: {},
-    sticker: {},
-    settings: {},
-    ...(global.db.data || {}),
-  };
-  global.db.chain = chain(global.db.data);
+  
+  try {
+    await global.db.read();
+    global.db.READ = null;
+    global.db.data = {
+      users: {},
+      chats: {},
+      stats: {},
+      msgs: {},
+      sticker: {},
+      settings: {},
+      ...(global.db.data || {}),
+    };
+    global.db.chain = chain(global.db.data);
+    console.log(chalk.green('[DB] Base de datos cargada correctamente'));
+  } catch (error) {
+    console.error(chalk.red('[DB] Error cargando base de datos:'), error);
+    global.db.READ = null;
+    global.db.data = {
+      users: {},
+      chats: {},
+      stats: {},
+      msgs: {},
+      sticker: {},
+      settings: {},
+    };
+    global.db.chain = chain(global.db.data);
+  }
 };
+
 loadDatabase();
 
+// Autenticación mejorada
 const { state, saveState, saveCreds } = await useMultiFileAuthState(
   global.sessions
 );
+
 const msgRetryCounterMap = (MessageRetryMap) => {};
 const msgRetryCounterCache = new NodeCache();
 const { version } = await fetchLatestBaileysVersion();
@@ -163,6 +191,7 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+
 const question = (texto) =>
   new Promise((resolver) => rl.question(texto, resolver));
 
@@ -182,16 +211,18 @@ if (!methodCodeQR && !methodCode && !credsExist) {
     if (!/^[1-2]$/.test(opcion)) {
       console.log(
         chalk.bold.redBright(
-          `✞ No se permiten numeros que no sean 1 o 2, tampoco letras o símbolos especiales.`
+          `✞ No se permiten números que no sean 1 o 2, tampoco letras o símbolos especiales.`
         )
       );
     }
   } while ((opcion !== "1" && opcion !== "2") || credsExist);
 }
 
+// Suprimir logs innecesarios
 console.info = () => {};
 console.debug = () => {};
 
+// Configuración de conexión optimizada
 const connectionOptions = {
   logger: pino({ level: "silent" }),
   printQRInTerminal: opcion == "1" ? true : methodCodeQR ? true : false,
@@ -220,9 +251,39 @@ const connectionOptions = {
   msgRetryCounterMap,
   defaultQueryTimeoutMs: undefined,
   version,
+  syncFullHistory: false,
+  maxMsgRetryCount: 5,
+  connectTimeoutMs: 60000,
+  keepAliveIntervalMs: 30000,
+  emitOwnEvents: true,
+  fireInitQueries: true,
+  generateHighQualityLinkPreview: true,
+  patchMessageBeforeSending: (message) => {
+    const requiresPatch = !!(
+      message.buttonsMessage ||
+      message.templateMessage ||
+      message.listMessage
+    );
+    if (requiresPatch) {
+      message = {
+        viewOnceMessage: {
+          message: {
+            messageContextInfo: {
+              deviceListMetadataVersion: 2,
+              deviceListMetadata: {},
+            },
+            ...message,
+          },
+        },
+      };
+    }
+    return message;
+  },
 };
 
 global.conn = makeWASocket(connectionOptions);
+
+// Manejo de código de emparejamiento
 if (!fs.existsSync(`./${global.sessions}/creds.json`)) {
   if (opcion === "2" || methodCode) {
     opcion = "2";
@@ -258,17 +319,34 @@ if (!fs.existsSync(`./${global.sessions}/creds.json`)) {
     }
   }
 }
+
 conn.isInit = false;
 conn.well = false;
 conn.logger.info(` ✞ H E C H O\n`);
 
+// Gestión optimizada de base de datos
 if (!opts["test"]) {
   if (global.db) {
     let dbWriteTimeout;
     let dbPendingWrite = false;
+    let lastWriteTime = 0;
+    const MIN_WRITE_INTERVAL = 30000; // 30 segundos mínimo entre escrituras
     
     global.scheduleDbWrite = () => {
+      const now = Date.now();
+      
+      // Si ya hay una escritura pendiente, no programar otra
       if (dbPendingWrite) return;
+      
+      // Si la última escritura fue hace poco, esperar
+      if (now - lastWriteTime < MIN_WRITE_INTERVAL) {
+        clearTimeout(dbWriteTimeout);
+        dbWriteTimeout = setTimeout(() => {
+          global.scheduleDbWrite();
+        }, MIN_WRITE_INTERVAL - (now - lastWriteTime));
+        return;
+      }
+      
       dbPendingWrite = true;
       
       clearTimeout(dbWriteTimeout);
@@ -276,36 +354,66 @@ if (!opts["test"]) {
         try {
           if (global.db.data) {
             await global.db.write();
+            lastWriteTime = Date.now();
             dbPendingWrite = false;
+            console.log(chalk.cyan('[DB] Base de datos guardada'));
           }
         } catch (e) {
-          console.error(e);
+          console.error(chalk.red('[DB] Error guardando base de datos:'), e);
           dbPendingWrite = false;
         }
-      }, 60000);
+      }, 60000); // Escribir después de 1 minuto de inactividad
     };
     
+    // Guardar base de datos periódicamente
     setInterval(async () => {
       if (global.db.data && !dbPendingWrite) {
-        await global.db.write().catch(console.error);
+        try {
+          await global.db.write();
+          console.log(chalk.cyan('[DB] Guardado periódico completado'));
+        } catch (e) {
+          console.error(chalk.red('[DB] Error en guardado periódico:'), e);
+        }
       }
+      
+      // Limpiar archivos temporales
       if (opts["autocleartmp"] && (global.support || {}).find) {
         const tmpDirs = [tmpdir(), "tmp", `${global.jadi || 'jadibot'}`];
-        tmpDirs.forEach((filename) =>
-          spawn("find", [filename, "-amin", "3", "-type", "f", "-delete"])
-        );
+        tmpDirs.forEach((filename) => {
+          try {
+            spawn("find", [filename, "-amin", "3", "-type", "f", "-delete"]);
+          } catch (e) {
+            // Ignorar errores
+          }
+        });
       }
     }, 60 * 1000);
   }
 }
 
+// Variables de reconexión
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 10;
+let reconnectTimeout = null;
+
+// Actualización de conexión mejorada
 async function connectionUpdate(update) {
   const { connection, lastDisconnect, isNewLogin, qr } = update;
   const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
   global.stopped = connection;
 
-  if (isNewLogin) conn.isInit = true;
-  if (!global.db.data) loadDatabase();
+  if (isNewLogin) {
+    conn.isInit = true;
+    reconnectAttempts = 0; // Resetear intentos en login exitoso
+  }
+  
+  if (!global.db.data) {
+    try {
+      await loadDatabase();
+    } catch (error) {
+      console.error(chalk.red('[DB] Error cargando base de datos en connectionUpdate:'), error);
+    }
+  }
 
   if ((qr && qr !== "0") || methodCodeQR) {
     if (opcion === "1" || methodCodeQR) {
@@ -317,28 +425,52 @@ async function connectionUpdate(update) {
 
   if (connection === "open") {
     console.log(chalk.bold.green("\n 𝘿𝙊𝙇𝙋𝙃𝙄𝙉 𝘽𝙊𝙏 𝘾𝙊𝙉𝙀𝘾𝙏𝘼𝘿𝙊 🐬"));
+    reconnectAttempts = 0; // Resetear intentos
+    
+    // Limpiar timeout de reconexión si existe
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+      reconnectTimeout = null;
+    }
   }
 
   if (connection === "close") {
+    console.log(chalk.yellow(`\n⚠️ Conexión cerrada. Razón: ${reason}`));
+    
+    // Limpiar timeout anterior
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+    }
+    
     switch (reason) {
       case DisconnectReason.badSession:
-      case DisconnectReason.loggedOut:
         console.log(
           chalk.bold.redBright(
-            `\n⚠︎ SESIÓN INVÁLIDA O CERRADA, BORRA LA CARPETA ${global.sessions} Y ESCANEA EL CÓDIGO QR ⚠︎`
+            `\n⚠︎ SESIÓN INVÁLIDA, BORRA LA CARPETA ${global.sessions} Y ESCANEA EL CÓDIGO QR ⚠︎`
           )
         );
         break;
+        
+      case DisconnectReason.loggedOut:
+        console.log(
+          chalk.bold.redBright(
+            `\n⚠︎ SESIÓN CERRADA, BORRA LA CARPETA ${global.sessions} Y ESCANEA EL CÓDIGO QR ⚠︎`
+          )
+        );
+        break;
+        
       case DisconnectReason.connectionClosed:
         console.log(
-          chalk.bold.magentaBright(`\n⚠︎ CONEXIÓN CERRADA, REINICIANDO...`)
+          chalk.bold.magentaBright(`\n⚠︎ CONEXIÓN CERRADA, RECONECTANDO... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`)
         );
         break;
+        
       case DisconnectReason.connectionLost:
         console.log(
-          chalk.bold.blueBright(`\n⚠︎ CONEXIÓN PERDIDA, RECONECTANDO...`)
+          chalk.bold.blueBright(`\n⚠︎ CONEXIÓN PERDIDA, RECONECTANDO... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`)
         );
         break;
+        
       case DisconnectReason.connectionReplaced:
         console.log(
           chalk.bold.yellowBright(
@@ -346,16 +478,19 @@ async function connectionUpdate(update) {
           )
         );
         return;
+        
       case DisconnectReason.restartRequired:
         console.log(chalk.bold.cyanBright(`\n☑ REINICIANDO SESIÓN...`));
         break;
+        
       case DisconnectReason.timedOut:
         console.log(
           chalk.bold.yellowBright(
-            `\n⚠︎ TIEMPO AGOTADO, REINTENTANDO CONEXIÓN...`
+            `\n⚠︎ TIEMPO AGOTADO, REINTENTANDO CONEXIÓN... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`
           )
         );
         break;
+        
       default:
         console.log(
           chalk.bold.redBright(
@@ -365,26 +500,116 @@ async function connectionUpdate(update) {
         break;
     }
 
-    if (conn?.ws?.socket === null) {
-      await global.reloadHandler(true).catch(console.error);
-      global.timestamp.connect = new Date();
+    // Reconectar con backoff exponencial
+    if (reason !== DisconnectReason.loggedOut && 
+        reason !== DisconnectReason.badSession &&
+        reason !== DisconnectReason.connectionReplaced) {
+      
+      if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        reconnectAttempts++;
+        
+        // Backoff exponencial: 5s, 10s, 20s, 40s, etc.
+        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts - 1), 60000);
+        
+        console.log(chalk.cyan(`🔄 Reconectando en ${delay / 1000} segundos...`));
+        
+        reconnectTimeout = setTimeout(async () => {
+          try {
+            if (conn?.ws?.socket === null) {
+              await global.reloadHandler(true);
+              global.timestamp.connect = new Date();
+            }
+          } catch (error) {
+            console.error(chalk.red('[CONN] Error en reconexión:'), error);
+          }
+        }, delay);
+      } else {
+        console.log(
+          chalk.bold.red(
+            `\n❌ MÁXIMO DE INTENTOS DE RECONEXIÓN ALCANZADO (${MAX_RECONNECT_ATTEMPTS})`
+          )
+        );
+        console.log(
+          chalk.bold.yellow(
+            `\n⚠️ Por favor reinicia el bot manualmente`
+          )
+        );
+      }
     }
   }
 }
 
+// Manejo mejorado de errores no capturados
 process.on("uncaughtException", (err) => {
   if (err.code === "ENAMETOOLONG") {
     console.error(
       chalk.red.bold(
-        `✘ ERROR (ENAMETOOLONG): ${err.message}. Esto suele ser causado por pasar contenido Base64 en lugar de una ruta de archivo. (El bot NO se reiniciará)`
+        `✘ ERROR (ENAMETOOLONG): ${err.message}. Esto suele ser causado por pasar contenido Base64 en lugar de una ruta de archivo.`
       )
     );
   } else {
     console.error(chalk.red.bold("✘ ERROR CRÍTICO CAPTURADO:"), err);
+    
+    // Si el error es crítico, intentar guardar la DB
+    if (global.db && global.db.data) {
+      global.db.write().catch(console.error);
+    }
   }
 });
+
 process.on("unhandledRejection", (reason, promise) => {
   console.error(chalk.red.bold("✘ RECHAZO NO MANEJADO:"), reason);
+});
+
+// Manejo de señales
+process.on("SIGINT", async () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGINT, cerrando limpiamente..."));
+  
+  // Guardar base de datos
+  if (global.db && global.db.data) {
+    try {
+      await global.db.write();
+      console.log(chalk.green('[DB] Base de datos guardada antes de cerrar'));
+    } catch (error) {
+      console.error(chalk.red('[DB] Error guardando antes de cerrar:'), error);
+    }
+  }
+  
+  // Cerrar conexión
+  if (conn && conn.ws && conn.ws.socket) {
+    try {
+      conn.ws.close();
+    } catch (error) {
+      console.error(chalk.red('[CONN] Error cerrando conexión:'), error);
+    }
+  }
+  
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGTERM, cerrando limpiamente..."));
+  
+  // Guardar base de datos
+  if (global.db && global.db.data) {
+    try {
+      await global.db.write();
+      console.log(chalk.green('[DB] Base de datos guardada antes de cerrar'));
+    } catch (error) {
+      console.error(chalk.red('[DB] Error guardando antes de cerrar:'), error);
+    }
+  }
+  
+  // Cerrar conexión
+  if (conn && conn.ws && conn.ws.socket) {
+    try {
+      conn.ws.close();
+    } catch (error) {
+      console.error(chalk.red('[CONN] Error cerrando conexión:'), error);
+    }
+  }
+  
+  process.exit(0);
 });
 
 let isInit = true;
@@ -399,17 +624,22 @@ global.reloadHandler = async function (restatConn) {
       handler = Handler.default || Handler;
     }
   } catch (e) {
-    console.error(e);
+    console.error(chalk.red('[RELOAD] Error recargando handler:'), e);
   }
+  
   if (restatConn) {
     const oldChats = global.conn.chats;
     try {
       global.conn.ws.close();
-    } catch {}
+    } catch (e) {
+      console.error(chalk.red('[RELOAD] Error cerrando conexión anterior:'), e);
+    }
+    
     conn.ev.removeAllListeners();
     global.conn = makeWASocket(connectionOptions, { chats: oldChats });
     isInit = true;
   }
+  
   if (!isInit) {
     conn.ev.off("messages.upsert", conn.handler);
     conn.ev.off("connection.update", conn.connectionUpdate);
@@ -421,7 +651,6 @@ global.reloadHandler = async function (restatConn) {
   conn.credsUpdate = saveCreds.bind(global.conn, true);
 
   conn.ev.on("messages.upsert", conn.handler);
-
   conn.ev.on("connection.update", conn.connectionUpdate);
   conn.ev.on("creds.update", conn.credsUpdate);
 
@@ -429,6 +658,7 @@ global.reloadHandler = async function (restatConn) {
   return true;
 };
 
+// Jadibot
 global.rutaJadiBot = join(__dirname, "../núcleo•dolphin/blackJadiBot");
 
 if (global.blackJadibts) {
@@ -459,9 +689,11 @@ if (global.blackJadibts) {
   }
 }
 
+// Carga de plugins
 const pluginFolder = global.__dirname(join(__dirname, "../plugins/index"));
 const pluginFilter = (filename) => /\.js$/.test(filename);
 global.plugins = {};
+
 async function filesInit() {
   for (const filename of readdirSync(pluginFolder).filter(pluginFilter)) {
     try {
@@ -474,29 +706,37 @@ async function filesInit() {
     }
   }
 }
+
 filesInit()
-  .then((_) => Object.keys(global.plugins))
+  .then((_) => {
+    console.log(chalk.green(`[PLUGINS] ${Object.keys(global.plugins).length} plugins cargados`));
+  })
   .catch(console.error);
 
 global.reload = async (_ev, filename) => {
   if (pluginFilter(filename)) {
     const dir = global.__filename(join(pluginFolder, filename), true);
     if (filename in global.plugins) {
-      if (existsSync(dir)) conn.logger.info(` updated plugin - '${filename}'`);
-      else {
+      if (existsSync(dir)) {
+        conn.logger.info(` updated plugin - '${filename}'`);
+      } else {
         conn.logger.warn(`deleted plugin - '${filename}'`);
         return delete global.plugins[filename];
       }
-    } else conn.logger.info(`new plugin - '${filename}'`);
+    } else {
+      conn.logger.info(`new plugin - '${filename}'`);
+    }
+    
     const err = syntaxerror(readFileSync(dir), filename, {
       sourceType: "module",
       allowAwaitOutsideFunction: true,
     });
-    if (err)
+    
+    if (err) {
       conn.logger.error(
         `syntax error while loading '${filename}'\n${format(err)}`
       );
-    else {
+    } else {
       try {
         const module = await import(
           `${global.__filename(dir)}?update=${Date.now()}`
@@ -512,10 +752,12 @@ global.reload = async (_ev, filename) => {
     }
   }
 };
+
 Object.freeze(global.reload);
 watch(pluginFolder, global.reload);
 await global.reloadHandler();
 
+// Test de herramientas
 async function _quickTest() {
   const test = await Promise.all(
     [
@@ -550,6 +792,7 @@ async function _quickTest() {
       ]);
     })
   );
+  
   const [ffmpeg, ffprobe, ffmpegWebp, convert, magick, gm, find] = test;
   const s = (global.support = {
     ffmpeg,
@@ -560,9 +803,11 @@ async function _quickTest() {
     gm,
     find,
   });
+  
   Object.freeze(global.support);
 }
 
+// Funciones de limpieza
 function clearTmp() {
   const tmpDir = join(process.cwd(), "tmp");
   if (!existsSync(tmpDir)) mkdirSync(tmpDir, { recursive: true });
@@ -572,7 +817,7 @@ function clearTmp() {
     try {
       unlinkSync(filePath);
     } catch (e) {
-      // Ignorar errores si no puede borrar
+      // Ignorar errores
     }
   });
 }
@@ -640,6 +885,7 @@ function purgeOldFiles() {
   });
 }
 
+// Intervalos de limpieza
 setInterval(
   async () => {
     if (stopped === "close" || !conn || !conn.user) return;
@@ -663,7 +909,7 @@ setInterval(
       )
     );
   },
-  1000 * 60 * 20 
+  1000 * 60 * 20
 );
 
 setInterval(
@@ -671,7 +917,7 @@ setInterval(
     if (stopped === "close" || !conn || !conn.user) return;
     await purgeOldFiles();
   },
-  1000 * 60 * 20 
+  1000 * 60 * 20
 );
 
 _quickTest()
@@ -680,26 +926,35 @@ _quickTest()
 
 let stopped;
 
+// Actualización de bio mejorada
 setInterval(async () => {
   if (stopped === "close" || !conn || !conn?.user) return;
+  
   const _uptime = process.uptime() * 1000;
   const uptime = clockString(_uptime);
   const bio = `🦠 Dolphin-Bot-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`;
   
   if (!global.lastBio || global.lastBio !== bio) {
-    await conn?.updateProfileStatus(bio).catch((_) => _);
-    global.lastBio = bio;
-    
-    if (global.rutaJadiBot) {
-      const bots = readdirSync(global.rutaJadiBot);
-      for (const bot of bots) {
-        const credsPath = join(global.rutaJadiBot, bot, "creds.json");
-        if (existsSync(credsPath)) {
-          try {
-            await conn?.updateProfileStatus(bio).catch((_) => _);
-          } catch {}
+    try {
+      await conn?.updateProfileStatus(bio);
+      global.lastBio = bio;
+      
+      // Actualizar bios de jadibots
+      if (global.rutaJadiBot) {
+        const bots = readdirSync(global.rutaJadiBot);
+        for (const bot of bots) {
+          const credsPath = join(global.rutaJadiBot, bot, "creds.json");
+          if (existsSync(credsPath)) {
+            try {
+              await conn?.updateProfileStatus(bio);
+            } catch (e) {
+              // Ignorar errores en jadibots
+            }
+          }
         }
       }
+    } catch (error) {
+      console.error(chalk.red('[BIO] Error actualizando bio:'), error);
     }
   }
 }, 120000);

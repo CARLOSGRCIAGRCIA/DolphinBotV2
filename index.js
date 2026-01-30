@@ -50,57 +50,6 @@ async function animacionDolphinBot() {
         DOLPHINBOT v1.0
        ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
 `),
-    chalk.hex("#3A7BC8")(`
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⣀⣤⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠟⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠈⠿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-      🌊 Inicializando... 🌊
-       ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
-`),
-    chalk.hex("#4A9FE2")(`
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠐⢿⣿⣿⣿⣿⣶⣤⣤⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀
-⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠀⠀
-⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⠿⠟⠃⠀⠀
-⠀⠀⢸⣿⣿⣿⣿⡿⠛⠉⠁⠀⢸⣿⠿⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-     🌊 Conectando núcleo... 🌊
-       ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
-`),
-    chalk.hex("#5AB9FF")(`
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠐⢿⣿⣿⣿⣿⣶⣤⣤⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀
-⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⠀⠀
-⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⠿⠿⠟⠃⠀
-⠀⠀⢸⣿⣿⣿⣿⡿⠛⠉⠁⠀⢸⣿⠿⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    🌊 Cargando protocolos... 🌊
-       ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
-`),
-    chalk.hex("#00BFFF")(`
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠐⢿⣿⣿⣿⣿⣶⣤⣤⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀
-⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⠀⠀
-⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⠿⠿⠟⠃⠀
-⠀⠀⢸⣿⣿⣿⣿⡿⠛⠉⠁⠀⢸⣿⠿⠁⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⢀⣾⣿⣿⣿⣷⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    🌊✨ Activando sistema... ✨🌊
-       ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
-`),
     chalk.hex("#00CED1")(`
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠐⢿⣿⣿⣿⣿⣶⣤⣤⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -121,7 +70,7 @@ async function animacionDolphinBot() {
 `),
   ];
 
-  const duracionTotal = 3000;
+  const duracionTotal = 2000;
   const delay = Math.floor(duracionTotal / frames.length);
   
   for (let i = 0; i < frames.length; i++) {
@@ -138,17 +87,17 @@ async function iniciarDolphinBot() {
     chalk.bold.cyanBright("\n⟦ ⌬ ACCESO CONCEDIDO | DOLPHIN-BOT V.1 ⟧")
   );
   console.log(chalk.gray("⌬ 𝘾𝙖𝙣𝙖𝙡𝙞𝙯𝙖𝙣𝙙𝙤 𝙖𝙘𝙘𝙚𝙨𝙤 𝙖𝙡 𝙖𝙧𝙧𝙚𝙘𝙞𝙛𝙚..."));
-  await new Promise((res) => setTimeout(res, 600));
+  await new Promise((res) => setTimeout(res, 400));
 
   await animacionDolphinBot();
 
   await barraCargaCyberpunk();
-  await new Promise((res) => setTimeout(res, 500));
+  await new Promise((res) => setTimeout(res, 300));
 
   console.log(chalk.redBright("\n☰✦☰═☰  𝘿𝙊𝙇𝙋𝙃𝙄𝙉-𝘽𝙊𝙏  ☰═☰✦☰"));
-  await new Promise((res) => setTimeout(res, 700));
+  await new Promise((res) => setTimeout(res, 400));
 
-  cfonts.say("El mejor Bot ", {
+  cfonts.say("El mejor Bot", {
     font: "block",
     align: "center",
     colors: ["#00FFFF", "#FF00FF"],
@@ -166,30 +115,65 @@ async function iniciarDolphinBot() {
   `)
   );
 
-  await new Promise((res) => setTimeout(res, 800));
+  await new Promise((res) => setTimeout(res, 400));
 
   console.log(chalk.bold.hex("#FF00FF")("\n⌬═════════════════════⌬"));
   console.log(
-    chalk.bold.white("      SISTEMA CREO POR: ") +
+    chalk.bold.white("      SISTEMA CREADO POR: ") +
       chalk.bold.hex("#FFD700")("Carlos G")
   );
   console.log(chalk.bold.hex("#FF00FF")("⌬═══════════════════════⌬\n"));
 
-  await new Promise((res) => setTimeout(res, 1200));
+  await new Promise((res) => setTimeout(res, 600));
 }
 
 let isRunning = false;
+let childProcess = null;
+
 function start(file) {
   if (isRunning) return;
   isRunning = true;
+  
   let args = [join(__dirname, "núcleo•dolphin", file), ...process.argv.slice(2)];
   setupMaster({ exec: args[0], args: args.slice(1) });
-  let p = fork();
-  p.on("exit", (_, code) => {
+  
+  childProcess = fork();
+  
+  childProcess.on("exit", (_, code) => {
     isRunning = false;
-    if (code !== 0) start(file);
+    childProcess = null;
+    
+    console.log(chalk.yellow(`\n⚠️ Proceso finalizado con código: ${code}`));
+    
+    if (code !== 0) {
+      console.log(chalk.cyan("🔄 Reiniciando en 3 segundos..."));
+      setTimeout(() => start(file), 3000);
+    }
+  });
+  
+  childProcess.on("error", (err) => {
+    console.error(chalk.red("❌ Error en proceso hijo:"), err);
+    isRunning = false;
+    childProcess = null;
   });
 }
+
+// Manejo de señales para cierre limpio
+process.on("SIGINT", () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGINT, cerrando limpiamente..."));
+  if (childProcess) {
+    childProcess.kill("SIGTERM");
+  }
+  process.exit(0);
+});
+
+process.on("SIGTERM", () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGTERM, cerrando limpiamente..."));
+  if (childProcess) {
+    childProcess.kill("SIGTERM");
+  }
+  process.exit(0);
+});
 
 const archivoArranque = "./.arranque-ok";
 if (!existsSync(archivoArranque)) {
