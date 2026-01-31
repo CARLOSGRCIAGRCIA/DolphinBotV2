@@ -178,7 +178,7 @@ process.on("SIGTERM", () => {
 const archivoArranque = "./.arranque-ok";
 if (!existsSync(archivoArranque)) {
   await iniciarDolphinBot();
-  writeFileSync(archivoArranque, "CARLOS_FINAL");
+  writeFileSync(archivoArranque, "DOLPHINBOT_RUNNING");
 }
 
 start("start.js");
