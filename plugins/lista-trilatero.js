@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Handler for creating Trilatero player lists with reaction and color support
+ * @author Carlos G
+ * @license MIT
+ * @copyright 2026 Carlos G. All rights reserved.
+ * @requires ../lib/listas.js
+ * @module handlers/Trilatero
+ * @version 2.0.0
+ * @see {@link https://github.com/CARLOSGRCIAGRCIA | GitHub Repository}
+ * 
+ * @description Creates Trilatero player lists that support reaction-based 
+ * player management and color specification. Part of the comprehensive 
+ * list management ecosystem with 8-hour cache duration.
+ * 
+ * @example
+ * .trilatero 9pm negro
+ * .trilatero 21:00 rojo
+ * .trilatero 15:30 azul
+ */
+
 import {
   generarLista,
   obtenerMenciones,
@@ -5,56 +25,36 @@ import {
 } from "../lib/listas.js";
 
 /**
- * @fileoverview Handler for creating Trilatero player lists with reaction support
- * @author Carlos G
- * @license MIT
- * @copyright 2026 Carlos G. All rights reserved.
- * @requires ../lib/listas.js
- * @module handlers/Trilatero
- * @version 1.0.0
- * 
- * This module creates Trilatero player lists that support reaction-based 
- * player management. Part of the comprehensive list management ecosystem.
- * 
- * CREDITS & USAGE TERMS:
- * - Developed by: Carlos G
- * - GitHub: https://github.com/CARLOSGRCIAGRCIA
- * - WhatsApp Contact: wa.me/529516526675
- * - Attribution required in any usage scenario
- * - Derivative works must maintain original authorship credit
- * - Commercial use permitted with proper credit
- */
-
-global.listasActivas = global.listasActivas || {};
-
-/**
- * Creates a new trilatero (three-team) player list with reaction functionality
- * @async
  * @function handlerTri
- * @param {object} m - Message object from WhatsApp containing mentions
- * @param {object} conn - Connection context object
- * @param {string} text - Command arguments (time for the match)
+ * @async
+ * @param {Object} m - Message object from WhatsApp containing mentions
+ * @param {Object} conn - Connection context object
+ * @param {string} text - Command arguments (time and optional color)
  * @returns {Promise<void>}
- * @description Initializes a trilatero list with 3 teams of 4 players each plus substitutes,
- * organizes mentioned users into teams, and registers list for reaction tracking
- * @example
- * // Command: .trilatero 15:00
- * // With 16 mentioned users - creates 3 teams of 4 players each
+ * @description Initializes a trilatero list with 4 teams of 4 players each plus substitutes,
+ * organizes mentioned users into teams, supports color parameter, and registers list 
+ * for reaction tracking with automatic 8-hour expiration
  */
 let handlerTri = async (m, { conn, text }) => {
-  const hora = text || "12:00 pm";
-  const mencionados = obtenerMenciones(m);
+  const args = text?.trim().split(/\s+/) || [];
+  const hora = args[0] || "12:00 pm";
+  const color = args[1] || null;
 
+  const mencionados = obtenerMenciones(m);
   const jugadores = [
     mencionados.slice(0, 4),
     mencionados.slice(4, 8),
     mencionados.slice(8, 12),
     mencionados.slice(12, 16),
   ];
-
   const suplentes = mencionados.slice(16, 18);
 
-  const resultado = generarLista("trilatero", { hora, jugadores, suplentes });
+  const resultado = generarLista("trilatero", { 
+    hora, 
+    jugadores, 
+    suplentes,
+    color 
+  });
 
   if (resultado.error) {
     return m.reply(resultado.error);
@@ -68,35 +68,18 @@ let handlerTri = async (m, { conn, text }) => {
     hora,
     jugadores,
     suplentes,
+    color,
   });
+
   estadoLista.messageKey = mensaje.key;
   global.listasActivas[mensaje.key.id] = estadoLista;
 
-  console.log(`📋 Lista Trilátero creada - ID: ${mensaje.key.id}`);
+  console.log(`Lista Trilátero creada - ID: ${estadoLista.id} - Color: ${color || 'ninguno'}`);
 };
 
-/**
- * Command help information displayed in bot help menu
- * @type {string[]}
- */
-handlerTri.help = ["trilatero <time>"];
-
-/**
- * Command categorization for organizational purposes
- * @type {string[]}
- */
+handlerTri.help = ["trilatero <time> [color]"];
 handlerTri.tags = ["group"];
-
-/**
- * Command triggers that users can type to activate this handler
- * @type {string[]}
- */
 handlerTri.command = ["trilatero", "tri"];
-
-/**
- * Restricts command usage to group chats only
- * @type {boolean}
- */
 handlerTri.group = true;
 
 export default handlerTri;
