@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Handler for creating Hexagonal player lists with reaction and color support
+ * @author Carlos G
+ * @license MIT
+ * @copyright 2026 Carlos G. All rights reserved.
+ * @requires ../lib/listas.js
+ * @module handlers/Hexagonal
+ * @version 2.0.0
+ * @see {@link https://github.com/CARLOSGRCIAGRCIA|GitHub Repository}
+ * 
+ * @description Creates Hexagonal player lists that support reaction-based 
+ * player management and color specification. Part of the comprehensive 
+ * list management ecosystem with 8-hour cache duration.
+ * 
+ * @example
+ * .hexagonal 9pm morado
+ * .hexagonal 19:00 naranja
+ * .hexagonal 16:45 rosa
+ */
+
 import {
   generarLista,
   obtenerMenciones,
@@ -5,51 +25,34 @@ import {
 } from "../lib/listas.js";
 
 /**
- * @fileoverview Handler for creating Hexagonal player lists with reaction support
- * @author Carlos G
- * @license MIT
- * @copyright 2026 Carlos G. All rights reserved.
- * @requires ../lib/listas.js
- * @module handlers/Hexagonal
- * @version 1.0.0
- * 
- * This module creates Hexagonal player lists that support reaction-based 
- * player management. Part of the comprehensive list management ecosystem.
- * 
- * CREDITS & USAGE TERMS:
- * - Developed by: Carlos G
- * - GitHub: https://github.com/CARLOSGRCIAGRCIA
- * - WhatsApp Contact: wa.me/529516526675
- * - Attribution required in any usage scenario
- * - Derivative works must maintain original authorship credit
- * - Commercial use permitted with proper credit
- */
-
-global.listasActivas = global.listasActivas || {};
-
-/**
- * Creates a new hexagonal (6v6) player list with reaction functionality
- * @async
  * @function handlerHexa
- * @param {object} m - Message object from WhatsApp
- * @param {object} conn - Connection context object
- * @param {string} text - Command arguments (match time)
+ * @async
+ * @param {Object} m - Message object from WhatsApp
+ * @param {Object} conn - Connection context object
+ * @param {string} text - Command arguments (time and optional color)
  * @returns {Promise<void>}
  * @description Initializes a hexagonal list with 2 teams of 4 players plus 2 substitutes,
- * organizes mentioned users into teams, and enables reaction-based participation
- * @example
- * // Command: .hexagonal 18:30
- * // With 8 mentioned users - creates 2 teams of 4 players
+ * organizes mentioned users into teams, supports color parameter, and enables 
+ * reaction-based participation with automatic 8-hour expiration
  */
 let handlerHexa = async (m, { conn, text }) => {
-  const hora = text || "12:00 pm";
+  const args = text?.trim().split(/\s+/) || [];
+  const hora = args[0] || "12:00 pm";
+  const color = args[1] || null;
+
   const mencionados = obtenerMenciones(m);
-
-  const jugadores = [mencionados.slice(0, 4), mencionados.slice(4, 8)];
-
+  const jugadores = [
+    mencionados.slice(0, 4), 
+    mencionados.slice(4, 8)
+  ];
   const suplentes = mencionados.slice(8, 10);
 
-  const resultado = generarLista("hexagonal", { hora, jugadores, suplentes });
+  const resultado = generarLista("hexagonal", { 
+    hora, 
+    jugadores, 
+    suplentes,
+    color 
+  });
 
   if (resultado.error) {
     return m.reply(resultado.error);
@@ -63,35 +66,18 @@ let handlerHexa = async (m, { conn, text }) => {
     hora,
     jugadores,
     suplentes,
+    color,
   });
+
   estadoLista.messageKey = mensaje.key;
   global.listasActivas[mensaje.key.id] = estadoLista;
 
-  console.log(`📋 Lista Hexagonal creada - ID: ${mensaje.key.id}`);
+  console.log(`📋 Lista Hexagonal creada - ID: ${estadoLista.id} - Color: ${color || 'ninguno'}`);
 };
 
-/**
- * Command help information for user guidance
- * @type {string[]}
- */
-handlerHexa.help = ["hexagonal <time>"];
-
-/**
- * Command category tags for organization
- * @type {string[]}
- */
+handlerHexa.help = ["hexagonal <time> [color]"];
 handlerHexa.tags = ["group"];
-
-/**
- * Command aliases that trigger this handler
- * @type {string[]}
- */
 handlerHexa.command = ["hexagonal", "hexa"];
-
-/**
- * Restricts command to group chat environments
- * @type {boolean}
- */
 handlerHexa.group = true;
 
 export default handlerHexa;
