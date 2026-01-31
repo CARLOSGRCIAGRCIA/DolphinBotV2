@@ -1,125 +1,180 @@
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=00CED1&center=false&vCenter=false&lines=🐬+𝐃𝐎𝐋𝐏𝐇𝐈𝐍+𝐁𝐎𝐓+𝐕2+🐬;🌊+𝐎𝐅𝐂+𝐔𝐏𝐃𝐀𝐓𝐄+🌊;@Carlos.grcia">
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+<div align="center">
 
-**No olvides dejar tu estrellita 🌟**
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=DolphinBot%20V2&fontSize=42&fontColor=fff&animation=twinkling&fontAlignY=32" width="100%"/>
 
-> 🐬 **El Bot de WhatsApp más inteligente 🌊**
+### Advanced WhatsApp Bot with Intelligent Features
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+[![Author](https://img.shields.io/badge/Author-CARLOS_OFC-00CED1?style=flat-square&logo=whatsapp&logoColor=white)](https://wa.me/529516526675)
+[![Instagram](https://img.shields.io/badge/@carlos.gxv-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://instagram.com/carlos.gxv)
+[![License](https://img.shields.io/github/license/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1&logo=github)](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2/stargazers)
+[![Forks](https://img.shields.io/github/forks/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1&logo=github)](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2/network)
 
-<h1 align="center">🐬 DolphinBot V2 🐬</h1>
+<img src="https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/src/img/Dolphin.png" width="280" alt="DolphinBot">
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/src/img/Dolphin.png" width="300" alt="DolphinBot">
-</p>
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Independent development - Not affiliated with WhatsApp LLC │
+└─────────────────────────────────────────────────────────────┘
+```
 
-<p align="center">
-  <a href="https://wa.me/529516526675">
-    <img title="Autor" src="https://img.shields.io/badge/CARLOS OFC-00CED1?style=for-the-badge&logo=whatsapp">
-  </a>
-  <a href="https://instagram.com/carlos.gxv">
-    <img title="Instagram del creador" src="https://img.shields.io/badge/@carlos.gxv-E4405F?style=for-the-badge&logo=instagram">
-  </a>
-</p>
+[Features](#features) • [Installation](#installation) • [List System](#list-system-v20) • [Troubleshooting](#troubleshooting) • [Support](#official-links)
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+</div>
 
-## 🆕 Actualizaciones Recientes
+<br>
+
+## Recent Updates
+
+<table>
+<tr>
+<td width="50%">
+
+### Version 2.3.0 - List System v2.0
+
+**New Features**
+- Automatic cache expiration (8 hours)
+- Unique identifiers for each list
+- Color support for multi-squad events
+- Multiple simultaneous lists
+- Automatic cleanup every 30 minutes
+
+</td>
+<td width="50%">
+
+### Critical Fixes
+
+**Resolved Issues**
+- ETIMEDOUT error fixed
+- Menu command stabilized
+- Registration system working
+- Handler optimized
+- Improved error management
+
+</td>
+</tr>
+</table>
 
 <details>
-<summary><b>✨ Version 2.2.0 - Enero 2026</b></summary>
+<summary><b>View Full Changelog</b></summary>
 
-### Correcciones Críticas
-- **Error ETIMEDOUT resuelto** - Ya no más timeouts en carga de imágenes
-- **Comando .menu arreglado** - Sistema de fallbacks múltiples implementado
-- **Comando .reg funcionando** - Registro de usuarios estabilizado
-- **Handler optimizado** - Mejor manejo de errores y rendimiento
+<br>
 
-### Nuevas Características
-- ✨ **Selección QR/Code mejorada** - Inicio más intuitivo
-- ✨ **Scripts de gestión automáticos** - `start-bot.sh`, `stop-bot.sh`
-- ✨ **Diagnóstico integrado** - `diagnostico.sh` detecta problemas automáticamente
-- ✨ **Manejo robusto de conexión** - Reconexión inteligente con backoff exponencial
+**Technical Improvements**
+- Optimized cache with automatic cleanup
+- More efficient database management
+- Configurable timeouts for all requests
+- Automatic fallbacks for external media
+- Cleaner and more useful logs
 
-### Mejoras Técnicas
-- Caché optimizado con limpieza automática
-- Gestión de base de datos más eficiente
-- Timeouts configurables en todas las peticiones
-- Fallbacks automáticos para medios externos
-- Logs más limpios y útiles
-
-### 📝 Documentación
-- Guía completa de solución de problemas
-- Instrucciones de instalación paso a paso
-- Troubleshooting automático con script
-- Explicaciones técnicas de cada fix
+**New Tools**
+- Improved QR/Code selection
+- Automatic management scripts
+- Integrated diagnostics
+- Intelligent reconnection with exponential backoff
 
 </details>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+<br>
 
-### ℹ️ Información importante
+## Features
 
-<details>
-<summary><b>📘 🐬 Info Bot</b></summary>
+### Core Functionality
 
-* Este proyecto **no está afiliado de ninguna manera** con `WhatsApp`. `WhatsApp` es una marca registrada de `WhatsApp LLC`, y este bot es un **desarrollo independiente** que **no tiene ninguna relación oficial con la compañía**.
+<table>
+<tr>
+<td width="50%">
 
-* **DolphinBot V2** es un bot inteligente y poderoso, diseñado para llevar la experiencia de WhatsApp a otro nivel 🌊
+**Communication**
+- Voice and text interaction
+- Intelligent chatbot (SimSimi)
+- Custom auto-responder
+- AI-powered conversations
 
-</details>
+**Group Management**
+- Advanced configuration
+- Anti-delete protection
+- Anti-link protection
+- Anti-spam protection
+- Anti-view-once
 
-<details>
-<summary><b>⚙️ 🐬 Funciones</b></summary>
+</td>
+<td width="50%">
 
-> El bot está en constante desarrollo. Si presenta alguna falla, repórtala al creador para darle una solución rápida.
+**Multimedia**
+- Create stickers from media
+- Image/video/gif support
+- URL to sticker conversion
+- Personalized welcome images
 
-- [x] Interacción con voz y texto
-- [x] Configuración avanzada de grupos
-- [x] Antidelete, antilink, antispam, antiviewonce
-- [x] Bienvenida personalizada con imágenes
-- [x] Juegos: tictactoe, matemáticas, trivia, etc.
-- [x] Chatbot inteligente (SimSimi)
-- [x] Auto-responder personalizado
-- [x] Crear stickers de imagen/video/gif/URL
-- [x] SubBot (Jadibot) - Códigos QR ilimitados
-- [x] Buscador Google avanzado
-- [x] Sistema RPG completo
-- [x] Menú personalizable con múltiples estilos
-- [x] Descarga de música y video de YouTube
-- [x] Descarga de TikTok, Instagram, Facebook
-- [x] Convertidor de formatos
-- [x] IA integrada para conversaciones
-- [x] **Sistema de diagnóstico automático**
-- [x] **Manejo robusto de errores**
-- [x] **Reconexión inteligente**
-- [ ] Más funciones en desarrollo
+**Bot Network**
+- SubBot (Jadibot)
+- Unlimited QR codes
+- Multiple instances
 
-</details>
+</td>
+</tr>
+</table>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+### Entertainment & Utilities
 
-🌐 **¡PUEDES INSTALAR EL BOT EN ALGÚN HOSTING!**
+<table>
+<tr>
+<td width="33%">
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+**Games**
+- Tic-tac-toe
+- Math challenges
+- Trivia questions
+- Complete RPG system
+- Interactive menus
 
-### 📲 Click en la imagen para obtener Termux
+</td>
+<td width="33%">
 
-<a href="https://www.mediafire.com/file/3hsvi3xkpq3a64o/termux_118.a">
-  <img src="https://files.catbox.moe/m850sl.webp" height="125px">
-</a>
+**Downloads**
+- YouTube music/video
+- TikTok content
+- Instagram media
+- Facebook videos
+- Format converter
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+</td>
+<td width="33%">
 
-## 🚀 Métodos de Instalación
+**Advanced Systems**
+- Dynamic lists
+- Reaction-based
+- Auto-expiration
+- Color support
+- Multi-list support
 
-### 💻 Instalar por Termux (Recomendado)
+</td>
+</tr>
+</table>
 
-<details>
-<summary><b>📲 Ver comandos para Termux</b></summary>
+<br>
 
-## 🚀 Instalación Rápida
+## Installation
+
+<div align="center">
+
+### Choose Your Platform
+
+[![Termux](https://img.shields.io/badge/Termux-Recommended-00CED1?style=for-the-badge&logo=android)](https://www.mediafire.com/file/3hsvi3xkpq3a64o/termux_118.a)
+[![Docker](https://img.shields.io/badge/Docker-Servers-2496ED?style=for-the-badge&logo=docker&logoColor=white)](#docker-recommended-for-servers)
+[![Cloud](https://img.shields.io/badge/Cloud_Shell-Quick_Start-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](#cloud-shell)
+
+</div>
+
+### Termux (Recommended)
+
+<details open>
+<summary><b>Click to view installation steps</b></summary>
+
+<br>
+
+**Step 1: Install Dependencies**
 
 ```bash
 termux-setup-storage
@@ -129,557 +184,523 @@ termux-setup-storage
 apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
 
+**Step 2: Clone Repository**
+
 ```bash
 git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
-```
-
-```bash
 cd DolphinBotV2
-```
-
-```bash
 npm install
 ```
 
-### 🎯 **INICIAR EL BOT (Elige tu método)**
+**Step 3: Start Bot**
 
-**Opción 1: Con Código QR (Recomendado)**
+<table>
+<tr>
+<td width="33%">
+
+**QR Code**
 ```bash
 npm run qr
-# O también:
+```
+or
+```bash
 bash start-bot.sh qr
 ```
 
-**Opción 2: Con Código de 8 Dígitos**
+</td>
+<td width="33%">
+
+**8-Digit Code**
 ```bash
 npm run code
-# O también:
+```
+or
+```bash
 bash start-bot.sh code
 ```
 
-**Opción 3: Inicio Normal (si ya tienes sesión)**
+</td>
+<td width="33%">
+
+**Normal Start**
 ```bash
 npm start
 ```
+(for existing session)
 
-> *Si aparece **(Y/I/N/O/D/Z) [default=N] ?** usa la letra **"y"** y luego **"ENTER"** para continuar con la instalación.*
+</td>
+</tr>
+</table>
 
-### **VERIFICAR QUE TODO FUNCIONA**
+**Step 4: Verify Installation**
 
 ```bash
-# Ejecutar diagnóstico completo
 bash diagnostico.sh
 ```
 
 </details>
 
+### Docker (Recommended for Servers)
+
 <details>
-<summary><b>💻 GESTIÓN DEL BOT EN TERMUX</b></summary>
+<summary><b>Click to view Docker installation</b></summary>
 
-### **INICIAR EL BOT**
+<br>
+
+**Requirements**
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+**Quick Start**
 
 ```bash
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
 cd DolphinBotV2
+docker compose build
 ```
 
-**Con Código QR:**
+**First Time Setup**
+
 ```bash
-bash start-bot.sh qr
-# O:
+# Get QR Code
+docker compose --profile qr up
+
+# Or with pairing code
+docker compose --profile code up
+```
+
+**Run 24/7**
+
+```bash
+docker compose --profile default up -d
+```
+
+**Management Commands**
+
+| Command | Description |
+|---------|-------------|
+| `docker compose logs -f` | View logs in real-time |
+| `docker compose down` | Stop bot |
+| `docker compose restart` | Restart bot |
+| `docker compose --profile default up -d` | Start in background |
+
+**Advantages**
+
+```
+┌─────────────────────────────────────────┐
+│  Easy installation                      │
+│  System isolation                       │
+│  Auto-restart on failure                │
+│  Portable between servers               │
+│  Simple updates                         │
+└─────────────────────────────────────────┘
+```
+
+</details>
+
+### Cloud Shell
+
+<details>
+<summary><b>Click to view Cloud Shell installation</b></summary>
+
+<br>
+
+```bash
+apt update && apt upgrade
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2 && cd DolphinBotV2
+yarn install && npm install
+```
+
+**Start Bot**
+
+```bash
+# With QR code
 npm run qr
-```
 
-**Con Código de 8 Dígitos:**
-```bash
-bash start-bot.sh code
-# O:
+# Or with 8-digit code
 npm run code
 ```
 
-**Normal (con sesión existente):**
+</details>
+
+<br>
+
+## List System v2.0
+
+### Overview
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│             DYNAMIC LIST SYSTEM WITH REACTIONS               │
+├──────────────────────────────────────────────────────────────┤
+│  • Automatic 8-hour expiration                               │
+│  • Unique ID for each list                                   │
+│  • Color support for team differentiation                    │
+│  • Multiple simultaneous lists                               │
+│  • Reaction-based join/leave                                 │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Lists with Color Support
+
+<table>
+<tr>
+<td width="33%">
+
+**Trilatero**
 ```bash
+.trilatero 9pm black
+```
+- 4 squads
+- 4 players each
+- Color display
+
+</td>
+<td width="33%">
+
+**Cuadrilatero**
+```bash
+.cuadrilatero 8pm red
+```
+- 3 squads
+- 4 players each
+- Color display
+
+</td>
+<td width="33%">
+
+**Hexagonal**
+```bash
+.hexagonal 7pm blue
+```
+- 2 squads
+- 4 players each
+- Color display
+
+</td>
+</tr>
+</table>
+
+### Standard Lists
+
+| Command | Format | Description |
+|---------|--------|-------------|
+| `.ascenso 9pm` | 1 squad, 4 players | Standard ascenso list |
+| `.vv2 21:00` | 1 squad, 6 players | VV2 match list |
+| `.scrim 8pm` | 1 squad, 4 players | Scrim practice list |
+| `.clk 19:00` | 1 squad, 4 players | CLK event list |
+
+### Supported Time Formats
+
+<div align="center">
+
+| 12-Hour Format | 24-Hour Format |
+|:--------------:|:--------------:|
+| `9pm` | `21:00` |
+| `9:00 pm` | `14:30` |
+| `09:00 pm` | `19:45` |
+
+</div>
+
+### Usage Example
+
+```bash
+# Create list with color
+.trilatero 9pm black
+
+# Users react with any emoji to join
+# Bot updates list automatically after 3 seconds
+# List expires after 8 hours
+```
+
+<br>
+
+## Management Commands
+
+### Termux Commands
+
+<table>
+<tr>
+<td width="50%">
+
+**Starting the Bot**
+
+```bash
+# Navigate to directory
+cd DolphinBotV2
+
+# Start with QR
+bash start-bot.sh qr
+
+# Start with code
+bash start-bot.sh code
+
+# Normal start
 npm start
 ```
 
-### **DETENER EL BOT**
+</td>
+<td width="50%">
+
+**Managing the Bot**
 
 ```bash
+# Stop bot
 bash stop-bot.sh
-# O también:
-pm2 stop dolphin-bot
-```
 
-### 🔄 **REINICIAR EL BOT**
-
-```bash
+# Restart bot
 pm2 restart dolphin-bot
-```
 
-### **VER ESTADO Y LOGS**
-
-```bash
-# Ver estado
-pm2 status
-
-# Ver logs en tiempo real
+# View logs
 pm2 logs dolphin-bot
 
-# Ver solo errores
-pm2 logs dolphin-bot --err
-
-# Monitorear recursos
+# Monitor resources
 pm2 monit
 ```
 
-### 🧿 **OBTENER NUEVO CODIGO QR**
+</td>
+</tr>
+</table>
 
-```bash
-cd DolphinBotV2
-```
-
-```bash
-# Detener bot si está corriendo
-pm2 stop dolphin-bot 2>/dev/null
-pm2 delete dolphin-bot 2>/dev/null
-```
-
-```bash
-# Eliminar sesión anterior
-rm -rf DolphinBotSession
-```
-
-```bash
-# Iniciar con QR nuevo
-bash start-bot.sh qr
-```
-
-### 🔮 **ACTIVAR 24/7 EN TERMUX CON PM2**
-
-```bash
-termux-wake-lock && npm i -g pm2 && pm2 start index.js && pm2 save && pm2 logs 
-```
-
-**O mejor aún, usa el script mejorado:**
+### 24/7 Activation with PM2
 
 ```bash
 termux-wake-lock
-bash start-bot.sh qr  # Primera vez
-# Después de escanear QR, el bot quedará 24/7 automáticamente
+bash start-bot.sh qr
+# After scanning QR, bot runs 24/7 automatically
 ```
 
-### 🔧 **DIAGNÓSTICO Y SOLUCIÓN DE PROBLEMAS**
+### Get New QR Code
 
 ```bash
-# Ejecutar diagnóstico completo
-bash diagnostico.sh
+pm2 stop dolphin-bot 2>/dev/null
+pm2 delete dolphin-bot 2>/dev/null
+rm -rf DolphinBotSession
+bash start-bot.sh qr
 ```
 
-Este script detectará automáticamente:
-- ✅ Versión de Node.js
-- ✅ Estado de dependencias
-- ✅ Sesión de WhatsApp
-- ✅ Base de datos
-- ✅ Plugins problemáticos
-- ✅ Errores recientes
-- ✅ Uso de recursos
-
-### 📤 **ACTUALIZAR DOLPHINBOT**
-
-> Comandos para actualizar DolphinBot de forma automática en Termux 
+### Update DolphinBot
 
 ```bash
 grep -q 'bash\|wget' <(dpkg -l) || apt install -y bash wget && wget -O - https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/termux.sh | bash
 ```
 
-Para que no pierdas tu progreso, estos comandos realizarán un respaldo de tu `database.json` y se agregará a la versión más reciente.
+<br>
 
-### 🛠️ **CORRECCIONES AUTOMÁTICAS**
+## Troubleshooting
 
-Si experimentas problemas después de actualizar:
+<div align="center">
 
+### Common Issues & Solutions
+
+</div>
+
+<details>
+<summary><b>ETIMEDOUT Error</b></summary>
+
+<br>
+
+**Symptom:** Bot shows constant timeout errors when loading images
+
+**Solution:**
 ```bash
-# Descargar e instalar correcciones automáticamente
 bash instalar-fixes.sh
 ```
 
-Este script:
-- Hace backup de archivos originales
-- Instala plugins corregidos
-- Actualiza scripts de gestión
-- Configura permisos correctamente
-
-> ⚠️ Warning: Estos comandos solo funcionan para TERMUX, REPLIT, LINUX
-
 </details>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-
-### 🐳 Instalar con Docker (Recomendado para Servidores)
-
 <details>
-<summary><b>🐋 Ver comandos para Docker</b></summary>
+<summary><b>Commands Not Responding</b></summary>
 
-## 📋 Requisitos
-- Docker Engine 20.10+
-- Docker Compose 2.0+
+<br>
 
-## 🚀 Instalación con Docker Compose (Fácil)
+**Symptom:** Bot is connected but commands don't work
 
+**Solution:**
 ```bash
-# Clonar repositorio
-git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
-cd DolphinBotV2
-```
-
-```bash
-# Construir imagen
-docker compose build
-```
-
-```bash
-# Primera vez - Obtener QR Code
-docker compose --profile qr up
-```
-
-```bash
-# O con código de emparejamiento
-docker compose --profile code up
-```
-
-```bash
-# Después, ejecutar 24/7
-docker compose --profile default up -d
-```
-
-## 🛠️ Comandos Útiles
-
-```bash
-# Ver logs en tiempo real
-docker compose logs -f
-
-# Detener el bot
-docker compose down
-
-# Reiniciar el bot
-docker compose restart
-
-# Actualizar DolphinBot
-docker compose down
-git pull origin main
-docker compose build --no-cache
-docker compose --profile default up -d
-```
-
-```bash
-# Para iniciar solo el bot normal (perfil default)
-docker-compose --profile default up -d --build
-
-# O para iniciar solo el bot con QR
-docker-compose --profile qr up -d --build
-
-# O para iniciar solo el bot con código
-docker-compose --profile code up -d --build
-```
-
-## 🐋 Instalación con Docker (Método Manual)
-
-```bash
-# Construir imagen
-docker build -t dolphinbot:latest .
-```
-
-```bash
-# Primera vez - Obtener QR
-docker run -it --rm \
-  --name dolphinbot-qr \
-  -v $(pwd)/DolphinBotSession:/app/DolphinBotSession \
-  -v $(pwd)/src/database:/app/src/database \
-  -v $(pwd)/tmp:/app/tmp \
-  -e BOT_MODE=qr \
-  dolphinbot:latest npm run qr
-```
-
-```bash
-# Ejecutar 24/7
-docker run -d \
-  --name dolphinbot \
-  --restart unless-stopped \
-  -v $(pwd)/DolphinBotSession:/app/DolphinBotSession \
-  -v $(pwd)/src/database:/app/src/database \
-  -v $(pwd)/tmp:/app/tmp \
-  -p 3000:3000 \
-  dolphinbot:latest
-```
-
-## 📊 Comandos de Gestión
-
-```bash
-# Ver logs
-docker logs -f dolphinbot
-
-# Detener
-docker stop dolphinbot
-
-# Iniciar
-docker start dolphinbot
-
-# Reiniciar
-docker restart dolphinbot
-
-# Ver estado
-docker ps | grep dolphin
-
-# Eliminar contenedor
-docker rm -f dolphinbot
-```
-
-## 🔄 Obtener Nuevo QR Code
-
-```bash
-# Con Docker Compose
-docker compose down
-rm -rf DolphinBotSession/*
-docker compose --profile qr up
-
-# Con Docker directo
-docker stop dolphinbot
-docker rm dolphinbot
-rm -rf DolphinBotSession/*
-docker run -it --rm ... (comando de QR)
-```
-
-## 💾 Hacer Backup
-
-```bash
-tar -czf dolphin-backup-$(date +%Y%m%d).tar.gz DolphinBotSession/ src/database/
-```
-
-## ✨ Ventajas de Docker
-- ✅ Fácil instalación
-- ✅ Aislado del sistema
-- ✅ Auto-reinicio si falla
-- ✅ Portátil entre servidores
-- ✅ Fácil actualización
-
-</details>
-
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-
-### ☁️ Instalar desde Cloud Shell
-
-<details>
-<summary><b>🌀 Ver comandos para Cloud Shell</b></summary>
-
-```bash
-apt update && apt upgrade
-```
-
-```bash
-git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2 && cd DolphinBotV2
-```
-
-```bash
-yarn install && npm install
-```
-
-```bash
-# Con código QR
-npm run qr
-
-# O con código de 8 dígitos
-npm run code
-```
-
-✅ ¡Bot listo para usarse! El mejor bot de WhatsApp 🐬
-
-</details>
-
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
-
-## 🛠️ Solución de Problemas
-
-<details>
-<summary><b>🔧 Problemas Comunes y Soluciones</b></summary>
-
-### ❌ Error ETIMEDOUT (catbox.moe)
-
-**Síntoma:** El bot muestra errores constantes de timeout al intentar cargar imágenes.
-
-**Solución:**
-```bash
-# Opción 1: Instalar correcciones automáticamente
-bash instalar-fixes.sh
-
-# Opción 2: Deshabilitar plugin temporalmente
-bash fix-plugin.sh
-```
-
-### ❌ Comandos no responden (.menu, .reg, etc.)
-
-**Síntoma:** El bot está conectado pero los comandos no funcionan.
-
-**Solución:**
-```bash
-# 1. Ejecutar diagnóstico
 bash diagnostico.sh
-
-# 2. Si hay plugins problemáticos, instalar fixes
 bash instalar-fixes.sh
-
-# 3. Reiniciar bot
 pm2 restart dolphin-bot
 ```
 
-### ❌ Bot no lee mensajes después de escanear QR
+</details>
 
-**Síntoma:** Escaneaste el QR pero el bot no responde a comandos.
+<details>
+<summary><b>Bot Not Reading Messages After QR</b></summary>
 
-**Solución:**
+<br>
+
+**Symptom:** QR scanned but bot doesn't respond to commands
+
+**Solution:**
 ```bash
-# Detener el proceso actual
 pm2 stop dolphin-bot 2>/dev/null
 pm2 delete dolphin-bot 2>/dev/null
-
-# Eliminar archivo de arranque
-rm -f .arranque-ok
-
-# Iniciar de nuevo
-bash start-bot.sh qr
-# Escanear QR
-# Esperar a que diga "Bot conectado"
-# Ctrl+C para salir de los logs
-
-# Reiniciar en modo normal
-pm2 start ecosystem.config.json
-```
-
-### ❌ El bot se desconecta constantemente
-
-**Solución:**
-```bash
-# Verificar sesión
-ls -la DolphinBotSession/creds.json
-
-# Si el archivo es muy pequeño (<1KB), eliminar y reconectar
-rm -rf DolphinBotSession
-bash start-bot.sh qr
-```
-
-### ❌ Sesión no válida o cerrada
-
-**Solución:**
-```bash
-# Limpiar todo y empezar de cero
-pm2 delete dolphin-bot 2>/dev/null
-rm -rf DolphinBotSession
 rm -f .arranque-ok
 bash start-bot.sh qr
 ```
-
-### 🔍 Diagnóstico Completo Automático
-
-```bash
-# Ejecutar script de diagnóstico
-bash diagnostico.sh
-```
-
-Este script verificará automáticamente:
-- ✅ Versión de Node.js y NPM
-- ✅ Instalación de PM2
-- ✅ Dependencias instaladas
-- ✅ Estado de la sesión
-- ✅ Base de datos
-- ✅ Archivos principales
-- ✅ Plugins problemáticos
-- ✅ Estado de PM2
-- ✅ Últimos errores
-- ✅ Uso de recursos
-
-### 📚 Documentación Adicional
-
-Para más información detallada:
-- `SOLUCION_PROBLEMAS.md` - Guía completa de troubleshooting
-- `GUIA_INSTALACION.md` - Instrucciones paso a paso
-- `FIX_ALLFAKE.md` - Explicación técnica de correcciones
 
 </details>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+<details>
+<summary><b>Constant Disconnections</b></summary>
 
-## 📋 Scripts Disponibles
+<br>
 
-| Script | Comando | Descripción |
-|--------|---------|-------------|
-| Inicio con QR | `npm run qr` o `bash start-bot.sh qr` | Inicia el bot y muestra código QR |
-| Inicio con Código | `npm run code` o `bash start-bot.sh code` | Inicia el bot con código de 8 dígitos |
-| Inicio Normal | `npm start` | Inicia el bot con sesión existente |
-| Detener Bot | `bash stop-bot.sh` | Detiene el bot de forma segura |
-| Diagnóstico | `bash diagnostico.sh` | Verifica el estado completo del bot |
-| Fix Automático | `bash instalar-fixes.sh` | Instala correcciones automáticamente |
-| Deshabilitar Plugin | `bash fix-plugin.sh` | Desactiva plugins problemáticos |
+**Symptom:** Bot disconnects frequently
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+**Solution:**
+```bash
+ls -la DolphinBotSession/creds.json
+# If file is very small (<1KB):
+rm -rf DolphinBotSession
+bash start-bot.sh qr
+```
 
-## 🔗 Enlaces oficiales
+</details>
 
-| APP | TIPO | ENLACE |
-|------|-------------|--------|
-| 📱 Canal Oficial Instagram | Noticias y actualizaciones | [¡Aquí!](https://www.instagram.com/carlos.gxv/) |
-| 👥 Grupo de Soporte | Comunidad y ayuda | [¡Aquí!](https://chat.whatsapp.com/EdND7QAHE9w0XPYGx2ZfQw) |
-| 💬 WhatsApp del Creador | Contacto directo | [¡Aquí!](https://wa.me/529516526675) |
-| 📺 Canal de WhatsApp | Actualizaciones oficiales | [¡Aquí!](https://whatsapp.com/channel/0029VbAfBzIKGGGKJWp5tT3L) |
+### Complete Diagnostic
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+```bash
+bash diagnostico.sh
+```
 
-## 👤 Creador del proyecto
+<div align="center">
+
+**This script automatically checks:**
+
+| Check | Description |
+|-------|-------------|
+| Node.js | Version verification |
+| Dependencies | Installation status |
+| Session | WhatsApp connection |
+| Database | Data integrity |
+| Plugins | Problem detection |
+| Resources | Memory and CPU usage |
+
+</div>
+
+<br>
+
+## Available Scripts
+
+<div align="center">
+
+| Script | Command | Description |
+|:-------|:--------|:------------|
+| Start (QR) | `npm run qr` or `bash start-bot.sh qr` | Start bot with QR code |
+| Start (Code) | `npm run code` or `bash start-bot.sh code` | Start bot with 8-digit code |
+| Normal Start | `npm start` | Start with existing session |
+| Stop | `bash stop-bot.sh` | Stop bot safely |
+| Diagnostic | `bash diagnostico.sh` | Complete system check |
+| Auto Fix | `bash instalar-fixes.sh` | Install corrections |
+| Disable Plugin | `bash fix-plugin.sh` | Disable problematic plugins |
+
+</div>
+
+<br>
+
+## Official Links
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/instagram-new.png" width="64"/><br>
+<b>Instagram</b><br>
+<sub>News & Updates</sub><br>
+<a href="https://www.instagram.com/carlos.gxv/">@carlos.gxv</a>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/whatsapp.png" width="64"/><br>
+<b>Support Group</b><br>
+<sub>Community Help</sub><br>
+<a href="https://chat.whatsapp.com/EdND7QAHE9w0XPYGx2ZfQw">Join Group</a>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/whatsapp.png" width="64"/><br>
+<b>Direct Contact</b><br>
+<sub>Creator Support</sub><br>
+<a href="https://wa.me/529516526675">Message</a>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/telegram-app.png" width="64"/><br>
+<b>WhatsApp Channel</b><br>
+<sub>Official Updates</sub><br>
+<a href="https://whatsapp.com/channel/0029VbAfBzIKGGGKJWp5tT3L">Follow</a>
+</td>
+</tr>
+</table>
+
+</div>
+
+<br>
+
+## Project Creator
+
+<div align="center">
 
 <a href="https://github.com/CARLOSGRCIAGRCIA">
-  <img src="https://github.com/CARLOSGRCIAGRCIA.png" width="250" height="250" alt="CARLOSGRCIAGRCIA"/>
+  <img src="https://github.com/CARLOSGRCIAGRCIA.png" width="180" style="border-radius: 50%; border: 3px solid #00CED1;" alt="Carlos G"/>
 </a>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+### Carlos G
 
-### 🌐 Redes sociales del creador
+<sub>Full Stack Developer | Bot Creator</sub>
 
-<p align="center">
-  <a href="https://instagram.com/carlos.gxv" target="_blank">
-    <img src="https://img.shields.io/badge/Instagram-%40carlos.gxv-E4405F?style=for-the-badge&logo=instagram">
-  </a>
-  <a href="https://www.tiktok.com/@carlos.grcia0" target="_blank">
-    <img src="https://img.shields.io/badge/TikTok-%40carlos.grcia0-000000?style=for-the-badge&logo=tiktok">
-  </a>
-  <a href="https://wa.me/529516526675" target="_blank">
-    <img src="https://img.shields.io/badge/WhatsApp-Contacto-25D366?style=for-the-badge&logo=whatsapp">
-  </a>
-</p>
+<br>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+[![Instagram](https://img.shields.io/badge/Instagram-%40carlos.gxv-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/carlos.gxv)
+[![TikTok](https://img.shields.io/badge/TikTok-%40carlos.grcia0-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@carlos.grcia0)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Contact-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/529516526675)
 
-### 💎 Agradecimientos especiales
+</div>
 
-<p align="center">
-  <i>Gracias a todos los que apoyan este proyecto y lo hacen crecer cada día 🐬</i>
-</p>
+<br>
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+## Project Statistics
 
-## 📊 Estadísticas del Proyecto
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/github/stars/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1">
-  <img src="https://img.shields.io/github/forks/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1">
-  <img src="https://img.shields.io/github/issues/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1">
-  <img src="https://img.shields.io/github/license/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&color=00CED1">
-</p>
+<!-- <img src="https://github-readme-stats.vercel.app/api?username=CARLOSGRCIAGRCIA&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=00CED1&icon_color=00CED1&text_color=fff" width="48%" /> -->
 
-![line](https://github.com/AnderMendoza/AnderMendoza/raw/main/assets/line-neon.gif)
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=CARLOSGRCIAGRCIA&theme=tokyonight&hide_border=true&background=0D1117&stroke=00CED1&ring=00CED1&fire=00CED1&currStreakLabel=00CED1" width="48%" />
 
-🐬 *Powered by* [**DolphinBot Team** 🌊](https://www.instagram.com/carlos.gxv/)
+<br><br>
 
-<img src="https://readme-typing-svg.herokuapp.com/?font=mono&size=30&duration=4000&color=00CED1&center=false&vCenter=false&lines=🐬+𝐃𝐎𝐋𝐏𝐇𝐈𝐍+𝐁𝐎𝐓+𝐒𝐘𝐒𝐓𝐄𝐌+🐬">
+![Stars](https://img.shields.io/github/stars/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1&logoColor=white)
+![Forks](https://img.shields.io/github/forks/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1&logoColor=white)
+![Issues](https://img.shields.io/github/issues/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1&logoColor=white)
+![License](https://img.shields.io/github/license/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&color=00CED1)
 
----
+</div>
 
-<p align="center">
-  <b>⭐ Si te gusta el proyecto, no olvides dejar tu estrella ⭐</b>
-</p>
+<br>
+
+## Support the Project
+
+<div align="center">
+
+If you find this project useful, please consider:
+
+**Starring the repository**  
+**Sharing with others**  
+**Reporting bugs**  
+**Suggesting features**  
+**Contributing code**
+
+<br>
+
+```
+┌──────────────────────────────────────────┐
+│  Made with care by DolphinBot Team      │
+│  Powered by Node.js & Baileys            │
+└──────────────────────────────────────────┘
+```
+
+<br>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
+
+</div>
