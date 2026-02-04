@@ -37,8 +37,7 @@ handler.all = async function (m) {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
-      return await response.buffer();
+      return Buffer.from(await response.arrayBuffer());
     } catch (error) {
       clearTimeout(timeoutId);
       

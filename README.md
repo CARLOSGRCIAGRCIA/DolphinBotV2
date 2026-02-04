@@ -1,191 +1,193 @@
-<div align="center">
+# DolphinBot V2
 
+<div align="center">
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=DolphinBot%20V2&fontSize=42&fontColor=fff&animation=twinkling&fontAlignY=32" width="100%"/>
 
-### Advanced WhatsApp Bot with Intelligent Features
+## Advanced WhatsApp Bot with Intelligent Features
 
 [![Author](https://img.shields.io/badge/Author-CARLOS_OFC-00CED1?style=flat-square&logo=whatsapp&logoColor=white)](https://wa.me/529516526675)
 [![Instagram](https://img.shields.io/badge/@carlos.gxv-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://instagram.com/carlos.gxv)
 [![License](https://img.shields.io/github/license/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1&logo=github)](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2/stargazers)
-[![Forks](https://img.shields.io/github/forks/CARLOSGRCIAGRCIA/DolphinBotV2?style=flat-square&color=00CED1&logo=github)](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2/network)
+[![Forks](https://img.shields.io/badge/Downloads-1k+-00CED1?style=flat-square&logo=github)](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2/network)
 
 <img src="https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/src/img/Dolphin.png" width="280" alt="DolphinBot">
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Independent development - Not affiliated with WhatsApp LLC │
-└─────────────────────────────────────────────────────────────┘
+===============================================================
+  Independent development - Not affiliated with WhatsApp LLC
+===============================================================
 ```
 
-[Features](#features) • [Installation](#installation) • [List System](#list-system-v20) • [Troubleshooting](#troubleshooting) • [Support](#official-links)
+[Latest Updates](#latest-updates-february-2026) • [Features](#features) • [Installation](#installation) • [Download System](#download-system) • [Rules System](#rules-system) • [Performance](#performance-optimizations) • [Troubleshooting](#troubleshooting)
 
 </div>
 
-<br>
+## Latest Updates - February 2026
 
-## Recent Updates
+### **YouTube Downloads Fixed!**
 
-<table>
-<tr>
-<td width="50%">
+**New Commands:**
+```
+.ytmp3 [song]    # Download MP3 audio
+.ytmp4 [video]   # Download video
+.ytmp4doc [vid]  # Video as document
+.play [song]     # Alternative for audio
+```
 
-### Version 2.3.0 - List System v2.0
+**Cross-Platform Compatibility:**
+- **Termux (Android)** - Auto-install with `.installtermux`
+- **Manjaro/Linux** - Auto-install with `.installtools`
+- **No external APIs required** - Everything works locally
+- **Automatic dependency installation**
 
-**New Features**
-- Automatic cache expiration (8 hours)
-- Unique identifiers for each list
-- Color support for multi-squad events
-- Multiple simultaneous lists
-- Automatic cleanup every 30 minutes
+### **New Rules System**
 
-</td>
-<td width="50%">
+**Community Rules Display:**
+```
+.reglas vv2    # Show VV2 community rules
+.reglas clk    # Show CLK community rules
+```
 
-### Critical Fixes
+**Features:**
+- Image-based rules for better visualization
+- Instant response with community-specific images
+- Automatic display without configuration needed
+- Centralized management for easy updates
 
-**Resolved Issues**
-- ETIMEDOUT error fixed
-- Menu command stabilized
-- Registration system working
-- Handler optimized
-- Improved error management
+### **Technical Improvements**
 
-</td>
-</tr>
-</table>
+**Core System Enhancements (start.js):**
+- **Global connection verification** - `global.isConnectionOpen()` function
+- **Enhanced bio update system** - Error 428 handling completely fixed
+- **Connection state management** - Improved reconnection logic
+- **Optimized intervals** - Reduced from 1-minute to 5-minute updates
+- **Automatic cleanup** - All intervals verify connection state before execution
 
-<details>
-<summary><b>View Full Changelog</b></summary>
+**Download System Rewrite:**
+- Multi-method fallback system (youtube-dl -> yt-dlp -> portable version)
+- Automatic dependency detection and installation
+- Platform-specific optimizations for Termux and Manjaro
+- Intelligent file cleanup and temporary file management
+- Enhanced error messages with specific solutions for each platform
 
-<br>
+**RPG System Fixes:**
+- Character invocation bugs resolved
+- Lists display optimized for better readability
+- Ranking system calculations improved
+- Zombie mode gameplay stabilized
 
-**Technical Improvements**
-- Optimized cache with automatic cleanup
-- More efficient database management
-- Configurable timeouts for all requests
-- Automatic fallbacks for external media
-- Cleaner and more useful logs
-
-**New Tools**
-- Improved QR/Code selection
-- Automatic management scripts
-- Integrated diagnostics
-- Intelligent reconnection with exponential backoff
-
-</details>
-
-<br>
+**New Plugins Added:**
+- `_rulesclk.js` - Community rules display system
+- New rule images added to `src/img/` directory
+- Complete documentation updated for all new features
 
 ## Features
 
-### Core Functionality
+### Download System (NEW)
 
-<table>
-<tr>
-<td width="50%">
+**Audio Downloads:**
+```
+.ytmp3 bad bunny
+.play shakira
+```
+- MP3 format with 128kbps+ quality
+- Automatic search by name or URL
+- Cross-platform compatibility (Termux & Manjaro)
+- Smart size limits (up to 200MB)
 
-**Communication**
-- Voice and text interaction
-- Intelligent chatbot (SimSimi)
-- Custom auto-responder
-- AI-powered conversations
+**Video Downloads:**
+```
+.ytmp4 tutorial android
+.ytmp4doc movie scene
+```
+- Two formats available: normal video & document
+- Quality auto-selected: 360p/480p/720p based on size
+- WhatsApp-optimized file sizes
+- Ready for both Termux and Manjaro systems
 
-**Group Management**
-- Advanced configuration
-- Anti-delete protection
-- Anti-link protection
-- Anti-spam protection
-- Anti-view-once
+### Community Rules System (NEW)
 
-</td>
-<td width="50%">
+```
+.reglas vv2    # Visual rules for VV2 community
+.reglas clk    # Visual rules for CLK community
+```
 
-**Multimedia**
-- Create stickers from media
-- Image/video/gif support
-- URL to sticker conversion
-- Personalized welcome images
+**Benefits:**
+- Image-based rules for easy reading and sharing
+- Fast access with single command
+- Always updated through centralized management
+- Community-specific content tailored to each group
 
-**Bot Network**
-- SubBot (Jadibot)
-- Unlimited QR codes
-- Multiple instances
+### Performance Optimizations
 
-</td>
-</tr>
-</table>
+**Connection Management:**
+- State verification before any operation execution
+- Error 428 handling completely resolved
+- Optimized update intervals reduced server load
+- Smart reconnection with automatic session recovery
+
+**Resource Management:**
+- Automatic cleanup of temporary download files
+- Connection-aware interval management
+- Reduced server load with efficient bio updates
+- Memory optimization for better session handling
 
 ### Entertainment & Utilities
 
-<table>
-<tr>
-<td width="33%">
+**Games & RPG System:**
+- Complete character creation and management
+- Interactive battle system
+- Real-time rankings and leaderboards
+- Zombie survival mode with progression
 
-**Games**
-- Tic-tac-toe
-- Math challenges
-- Trivia questions
-- Complete RPG system
-- Interactive menus
+**Media Tools:**
+- Sticker creator from images/videos
+- Format conversion tools
+- Anime image search with multiple sources
+- URL to media conversion
 
-</td>
-<td width="33%">
+**Group Management:**
+- Anti-spam protection with configurable thresholds
+- Custom welcome messages with media support
+- Auto-moderation tools
+- Link protection and filtering
 
-**Downloads**
-- YouTube music/video
-- TikTok content
-- Instagram media
-- Facebook videos
-- Format converter
+### Dynamic List System v2.0
 
-</td>
-<td width="33%">
+**Color-Supported Lists:**
+```
+.trilatero 9pm blue    # 4 teams with colored display
+.cuadrilatero 8pm red  # 3 teams automatic management
+.hexagonal 7pm green   # 2 teams color-coded
+```
 
-**Advanced Systems**
-- Dynamic lists
-- Reaction-based
-- Auto-expiration
-- Color support
-- Multi-list support
+**Standard Lists:**
+```
+.ascenso 9pm          # Standard ascenso format
+.vv2 21:00            # VV2 match format
+.scrim 8pm            # Practice scrim format
+.clk 19:00            # CLK event format
+```
 
-</td>
-</tr>
-</table>
-
-<br>
+**Features:**
+- Color support for team differentiation
+- 8-hour automatic expiration
+- Reaction-based participation system
+- Unique identifiers for each list
+- Multiple simultaneous lists supported
 
 ## Installation
 
-<div align="center">
-
-### Choose Your Platform
-
-[![Termux](https://img.shields.io/badge/Termux-Recommended-00CED1?style=for-the-badge&logo=android)](https://www.mediafire.com/file/3hsvi3xkpq3a64o/termux_118.a)
-[![Docker](https://img.shields.io/badge/Docker-Servers-2496ED?style=for-the-badge&logo=docker&logoColor=white)](#docker-recommended-for-servers)
-[![Cloud](https://img.shields.io/badge/Cloud_Shell-Quick_Start-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](#cloud-shell)
-
-</div>
-
-### Termux (Recommended)
-
-<details open>
-<summary><b>Click to view installation steps</b></summary>
-
-<br>
+### Termux (Android) - Recommended
 
 **Step 1: Install Dependencies**
-
 ```bash
 termux-setup-storage
-```
-
-```bash
 apt update && apt upgrade && pkg install -y git nodejs ffmpeg imagemagick yarn
 ```
 
 **Step 2: Clone Repository**
-
 ```bash
 git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
 cd DolphinBotV2
@@ -194,73 +196,62 @@ npm install
 
 **Step 3: Start Bot**
 
-<table>
-<tr>
-<td width="33%">
+| Method | Command |
+|--------|---------|
+| QR Code | `npm run qr` or `bash start-bot.sh qr` |
+| 8-Digit Code | `npm run code` or `bash start-bot.sh code` |
+| Normal Start | `npm start` (existing session) |
 
-**QR Code**
+**Step 4: Install Download Dependencies**
 ```bash
-npm run qr
-```
-or
-```bash
-bash start-bot.sh qr
-```
+# Automatic installation
+.installtermux
 
-</td>
-<td width="33%">
-
-**8-Digit Code**
-```bash
-npm run code
-```
-or
-```bash
-bash start-bot.sh code
+# Or manual installation
+pkg install youtube-dl python ffmpeg
+pip install yt-dlp
 ```
 
-</td>
-<td width="33%">
+### Manjaro/Linux Installation
 
-**Normal Start**
+**Step 1: System Preparation**
 ```bash
-npm start
-```
-(for existing session)
-
-</td>
-</tr>
-</table>
-
-**Step 4: Verify Installation**
-
-```bash
-bash diagnostico.sh
+sudo pacman -Syu
+sudo pacman -S git nodejs npm ffmpeg imagemagick yarn
 ```
 
-</details>
+**Step 2: Clone and Setup**
+```bash
+git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
+cd DolphinBotV2
+npm install
+```
 
-### Docker (Recommended for Servers)
+**Step 3: Install Download System**
+```bash
+# Automatic installation
+.installtools
 
-<details>
-<summary><b>Click to view Docker installation</b></summary>
+# Or manual installation
+sudo pacman -S youtube-dl ffmpeg
+# Or with yt-dlp
+pip install yt-dlp
+```
 
-<br>
+### Docker Installation (Servers)
 
-**Requirements**
+**Requirements:**
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 
-**Quick Start**
-
+**Quick Start:**
 ```bash
 git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2
 cd DolphinBotV2
 docker compose build
 ```
 
-**First Time Setup**
-
+**First Time Setup:**
 ```bash
 # Get QR Code
 docker compose --profile qr up
@@ -269,41 +260,20 @@ docker compose --profile qr up
 docker compose --profile code up
 ```
 
-**Run 24/7**
-
+**Run 24/7:**
 ```bash
 docker compose --profile default up -d
 ```
 
-**Management Commands**
-
+**Management Commands:**
 | Command | Description |
 |---------|-------------|
-| `docker compose logs -f` | View logs in real-time |
+| `docker compose logs -f` | View real-time logs |
 | `docker compose down` | Stop bot |
 | `docker compose restart` | Restart bot |
 | `docker compose --profile default up -d` | Start in background |
 
-**Advantages**
-
-```
-┌─────────────────────────────────────────┐
-│  Easy installation                      │
-│  System isolation                       │
-│  Auto-restart on failure                │
-│  Portable between servers               │
-│  Simple updates                         │
-└─────────────────────────────────────────┘
-```
-
-</details>
-
-### Cloud Shell
-
-<details>
-<summary><b>Click to view Cloud Shell installation</b></summary>
-
-<br>
+### Cloud Shell Quick Installation
 
 ```bash
 apt update && apt upgrade
@@ -311,167 +281,283 @@ git clone https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2 && cd DolphinBotV2
 yarn install && npm install
 ```
 
-**Start Bot**
-
+**Start Options:**
 ```bash
 # With QR code
 npm run qr
 
-# Or with 8-digit code
+# With 8-digit code
 npm run code
 ```
 
-</details>
+## Download System
 
-<br>
+### How It Works
 
-## List System v2.0
-
-### Overview
+The download system uses a multi-layer approach:
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│             DYNAMIC LIST SYSTEM WITH REACTIONS               │
-├──────────────────────────────────────────────────────────────┤
-│  • Automatic 8-hour expiration                               │
-│  • Unique ID for each list                                   │
-│  • Color support for team differentiation                    │
-│  • Multiple simultaneous lists                               │
-│  • Reaction-based join/leave                                 │
-└──────────────────────────────────────────────────────────────┘
+[User Command] -> [Search YouTube] -> [Download Method] -> [Send to User]
+      |                |                   |
+  .ytmp3 song      Find video ID    Try youtube-dl first
+  .ytmp4 video     Get metadata     Try yt-dlp second
+  .ytmp4doc url    Validate         Download yt-dlp if needed
 ```
 
-### Lists with Color Support
+### Platform-Specific Configuration
 
-<table>
-<tr>
-<td width="33%">
+**Termux (Android):**
+- Uses `/data/data/com.termux/files/usr/tmp` for temporary files
+- Lower memory limits for mobile devices
+- Optimized for ARM architecture
+- Automatic storage permission handling
 
-**Trilatero**
-```bash
-.trilatero 9pm black
+**Manjaro/Linux:**
+- Uses `./temp_downloads` directory
+- Higher file size limits
+- Better multi-threading support
+- System package manager integration
+
+### Commands Reference
+
+| Command | Description | Max Size | Output Format |
+|---------|-------------|----------|---------------|
+| `.ytmp3 <search>` | Download audio | 200MB | MP3 audio |
+| `.play <search>` | Alternative audio | 200MB | MP3 audio |
+| `.ytmp4 <search>` | Download video | 50MB | MP4 video |
+| `.ytmp4doc <search>` | Video as document | 100MB | MP4 document |
+
+### Supported Search Formats
+
 ```
-- 4 squads
-- 4 players each
-- Color display
-
-</td>
-<td width="33%">
-
-**Cuadrilatero**
-```bash
-.cuadrilatero 8pm red
-```
-- 3 squads
-- 4 players each
-- Color display
-
-</td>
-<td width="33%">
-
-**Hexagonal**
-```bash
-.hexagonal 7pm blue
-```
-- 2 squads
-- 4 players each
-- Color display
-
-</td>
-</tr>
-</table>
-
-### Standard Lists
-
-| Command | Format | Description |
-|---------|--------|-------------|
-| `.ascenso 9pm` | 1 squad, 4 players | Standard ascenso list |
-| `.vv2 21:00` | 1 squad, 6 players | VV2 match list |
-| `.scrim 8pm` | 1 squad, 4 players | Scrim practice list |
-| `.clk 19:00` | 1 squad, 4 players | CLK event list |
-
-### Supported Time Formats
-
-<div align="center">
-
-| 12-Hour Format | 24-Hour Format |
-|:--------------:|:--------------:|
-| `9pm` | `21:00` |
-| `9:00 pm` | `14:30` |
-| `09:00 pm` | `19:45` |
-
-</div>
-
-### Usage Example
-
-```bash
-# Create list with color
-.trilatero 9pm black
-
-# Users react with any emoji to join
-# Bot updates list automatically after 3 seconds
-# List expires after 8 hours
+1. By song/video name: .ytmp3 "bad bunny"
+2. By YouTube URL: .ytmp4 https://youtu.be/VIDEO_ID
+3. By search terms: .ytmp4doc tutorial de programacion
+4. Direct video ID: .ytmp3 dQw4w9WgXcQ
 ```
 
-<br>
+### Automatic Dependency Installation
 
-## Management Commands
+The system includes self-healing capabilities:
 
-### Termux Commands
+1. **Detection**: Checks for required tools (youtube-dl, yt-dlp, ffmpeg)
+2. **Installation**: Automatically installs missing dependencies
+3. **Fallback**: Downloads portable versions if system installation fails
+4. **Verification**: Confirms all components are working correctly
 
-<table>
-<tr>
-<td width="50%">
+## Rules System
 
-**Starting the Bot**
+### Implementation Details
 
-```bash
-# Navigate to directory
-cd DolphinBotV2
+The rules system provides community-specific guidelines through visual images:
 
-# Start with QR
+**File Structure:**
+```
+src/img/
+├── clkrules.png    # CLK community rules
+└── vv2rules.png    # VV2 community rules
+```
+
+**Plugin Features:**
+- Automatic image loading and validation
+- Command aliases support (`rules`, `reglas`, `normas`)
+- Error handling for missing images
+- Quick response time (< 1 second)
+- No external dependencies required
+
+### Usage Examples
+
+**Basic Usage:**
+```
+User: .reglas vv2
+Bot: [Sends vv2rules.png image]
+```
+
+**Alternative Commands:**
+```
+.rules vv2
+.normas clk
+.reglas clk
+```
+
+**Benefits for Community Admins:**
+- Centralized rules management
+- Easy updates (just replace the image)
+- Consistent presentation across groups
+- Reduced administrative workload
+
+## Performance Optimizations
+
+### Connection Management
+
+**Global Connection Verification:**
+```javascript
+// New function in start.js
+global.isConnectionOpen = function() {
+    return this.connection && 
+           this.connection.user && 
+           this.connection.state === 'open';
+}
+```
+
+**Benefits:**
+- Prevents operations when connection is closed
+- Reduces error 428 occurrences
+- Improves bot stability
+- Better resource utilization
+
+**Bio Update Optimization:**
+- Interval increased from 60s to 300s (5 minutes)
+- Connection state verification before updating
+- Error 428 specific handling
+- Last bio tracking to prevent duplicates
+
+### Interval Management
+
+All system intervals now verify connection state:
+
+**Before:**
+```javascript
+setInterval(() => {
+    // Would run even if connection was closed
+    updateBio();
+}, 60000);
+```
+
+**After:**
+```javascript
+setInterval(() => {
+    if (global.isConnectionOpen()) {
+        updateBio();
+    }
+}, 300000); // 5 minutes
+```
+
+**Optimized Intervals:**
+1. **Bio Updates**: 300s (connection verified)
+2. **File Cleanup**: 1800s (connection verified)
+3. **Session Purge**: 3600s (connection verified)
+4. **Temporary Cleanup**: 7200s (connection verified)
+
+### Memory Management
+
+**Session Handling:**
+- Automatic cleanup of orphaned sessions
+- Connection state-based resource allocation
+- Reduced memory footprint during disconnections
+- Better garbage collection coordination
+
+**File System Management:**
+- Automatic temporary file deletion
+- Size-based cleanup priorities
+- Platform-specific optimization
+- Connection-aware cleanup scheduling
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+**Issue: "Error 428 - Connection Closed"**
+```
+Solution: Update to latest start.js file
+The fix: Connection verification before bio updates
+Command: Replace núcleo•dolphin/start.js and restart
+```
+
+**Issue: Downloads Not Working**
+```
+Solution 1 (Termux): .installtermux
+Solution 2 (Manjaro): .installtools
+Solution 3 (Manual): pkg install youtube-dl ffmpeg
+Solution 4 (Portable): Bot will auto-download yt-dlp
+```
+
+**Issue: Bot Not Responding After QR**
+```
+Solution: Complete restart procedure
+Commands:
+pm2 stop dolphin-bot 2>/dev/null
+pm2 delete dolphin-bot 2>/dev/null
+rm -rf DolphinBotSession
 bash start-bot.sh qr
-
-# Start with code
-bash start-bot.sh code
-
-# Normal start
-npm start
 ```
 
-</td>
-<td width="50%">
+**Issue: Commands Not Recognized**
+```
+Solution: Run diagnostic script
+Command: bash diagnostico.sh
+This checks: Node.js, dependencies, session, plugins
+```
 
-**Managing the Bot**
+### Diagnostic Commands
 
+**Complete System Check:**
 ```bash
-# Stop bot
-bash stop-bot.sh
-
-# Restart bot
-pm2 restart dolphin-bot
-
-# View logs
-pm2 logs dolphin-bot
-
-# Monitor resources
-pm2 monit
+bash diagnostico.sh
 ```
 
-</td>
-</tr>
-</table>
+**Automatic Fix Installation:**
+```bash
+bash instalar-fixes.sh
+```
 
-### 24/7 Activation with PM2
+**Plugin-Specific Fixes:**
+```bash
+bash fix-plugin.sh [plugin_name]
+```
 
+**Connection Testing:**
+```bash
+# Check if bot can connect
+npm run test-connection
+
+# View detailed connection logs
+pm2 logs dolphin-bot --lines 100
+```
+
+### Platform-Specific Troubleshooting
+
+**Termux Issues:**
+```
+1. Storage permissions: termux-setup-storage
+2. Package updates: pkg update && pkg upgrade
+3. Missing tools: pkg install python nodejs ffmpeg
+4. Bot restart: pm2 restart dolphin-bot
+```
+
+**Manjaro Issues:**
+```
+1. System updates: sudo pacman -Syu
+2. Missing packages: sudo pacman -S youtube-dl ffmpeg
+3. Permission issues: sudo chmod +x start-bot.sh
+4. Service management: systemctl restart pm2
+```
+
+## Available Scripts
+
+### Management Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| Start (QR) | `npm run qr` or `bash start-bot.sh qr` | Start with QR code authentication |
+| Start (Code) | `npm run code` or `bash start-bot.sh code` | Start with 8-digit pairing code |
+| Normal Start | `npm start` | Start with existing session |
+| Stop Bot | `bash stop-bot.sh` | Safe bot shutdown |
+| Diagnostic | `bash diagnostico.sh` | Complete system analysis |
+| Auto Fix | `bash instalar-fixes.sh` | Automatic problem resolution |
+| Plugin Fix | `bash fix-plugin.sh` | Disable problematic plugins |
+| Update Bot | `bash update-bot.sh` | Update to latest version |
+
+### Utility Scripts
+
+**24/7 Activation (Termux):**
 ```bash
 termux-wake-lock
 bash start-bot.sh qr
-# After scanning QR, bot runs 24/7 automatically
+# After QR scan, bot runs continuously
 ```
 
-### Get New QR Code
-
+**Get New QR Code:**
 ```bash
 pm2 stop dolphin-bot 2>/dev/null
 pm2 delete dolphin-bot 2>/dev/null
@@ -479,163 +565,60 @@ rm -rf DolphinBotSession
 bash start-bot.sh qr
 ```
 
-### Update DolphinBot
-
+**Update DolphinBot:**
 ```bash
 grep -q 'bash\|wget' <(dpkg -l) || apt install -y bash wget && wget -O - https://raw.githubusercontent.com/CARLOSGRCIAGRCIA/DolphinBotV2/main/termux.sh | bash
 ```
 
-<br>
-
-## Troubleshooting
-
-<div align="center">
-
-### Common Issues & Solutions
-
-</div>
-
-<details>
-<summary><b>ETIMEDOUT Error</b></summary>
-
-<br>
-
-**Symptom:** Bot shows constant timeout errors when loading images
-
-**Solution:**
+**Monitor Resources:**
 ```bash
-bash instalar-fixes.sh
+# Real-time monitoring
+pm2 monit
+
+# Log viewing
+pm2 logs dolphin-bot
+
+# Status check
+pm2 status
 ```
-
-</details>
-
-<details>
-<summary><b>Commands Not Responding</b></summary>
-
-<br>
-
-**Symptom:** Bot is connected but commands don't work
-
-**Solution:**
-```bash
-bash diagnostico.sh
-bash instalar-fixes.sh
-pm2 restart dolphin-bot
-```
-
-</details>
-
-<details>
-<summary><b>Bot Not Reading Messages After QR</b></summary>
-
-<br>
-
-**Symptom:** QR scanned but bot doesn't respond to commands
-
-**Solution:**
-```bash
-pm2 stop dolphin-bot 2>/dev/null
-pm2 delete dolphin-bot 2>/dev/null
-rm -f .arranque-ok
-bash start-bot.sh qr
-```
-
-</details>
-
-<details>
-<summary><b>Constant Disconnections</b></summary>
-
-<br>
-
-**Symptom:** Bot disconnects frequently
-
-**Solution:**
-```bash
-ls -la DolphinBotSession/creds.json
-# If file is very small (<1KB):
-rm -rf DolphinBotSession
-bash start-bot.sh qr
-```
-
-</details>
-
-### Complete Diagnostic
-
-```bash
-bash diagnostico.sh
-```
-
-<div align="center">
-
-**This script automatically checks:**
-
-| Check | Description |
-|-------|-------------|
-| Node.js | Version verification |
-| Dependencies | Installation status |
-| Session | WhatsApp connection |
-| Database | Data integrity |
-| Plugins | Problem detection |
-| Resources | Memory and CPU usage |
-
-</div>
-
-<br>
-
-## Available Scripts
-
-<div align="center">
-
-| Script | Command | Description |
-|:-------|:--------|:------------|
-| Start (QR) | `npm run qr` or `bash start-bot.sh qr` | Start bot with QR code |
-| Start (Code) | `npm run code` or `bash start-bot.sh code` | Start bot with 8-digit code |
-| Normal Start | `npm start` | Start with existing session |
-| Stop | `bash stop-bot.sh` | Stop bot safely |
-| Diagnostic | `bash diagnostico.sh` | Complete system check |
-| Auto Fix | `bash instalar-fixes.sh` | Install corrections |
-| Disable Plugin | `bash fix-plugin.sh` | Disable problematic plugins |
-
-</div>
-
-<br>
 
 ## Official Links
 
-<div align="center">
+### Support and Community
 
-<table>
-<tr>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/fluency/96/instagram-new.png" width="64"/><br>
-<b>Instagram</b><br>
-<sub>News & Updates</sub><br>
-<a href="https://www.instagram.com/carlos.gxv/">@carlos.gxv</a>
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/fluency/96/whatsapp.png" width="64"/><br>
-<b>Support Group</b><br>
-<sub>Community Help</sub><br>
-<a href="https://chat.whatsapp.com/EdND7QAHE9w0XPYGx2ZfQw">Join Group</a>
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/fluency/96/whatsapp.png" width="64"/><br>
-<b>Direct Contact</b><br>
-<sub>Creator Support</sub><br>
-<a href="https://wa.me/529516526675">Message</a>
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/fluency/96/telegram-app.png" width="64"/><br>
-<b>WhatsApp Channel</b><br>
-<sub>Official Updates</sub><br>
-<a href="https://whatsapp.com/channel/0029VbAfBzIKGGGKJWp5tT3L">Follow</a>
-</td>
-</tr>
-</table>
+**Developer Contact:**
+- **WhatsApp**: [Carlos G](https://wa.me/529516526675)
+- **Instagram**: [@carlos.gxv](https://instagram.com/carlos.gxv)
+- **TikTok**: [@carlos.grcia0](https://www.tiktok.com/@carlos.grcia0)
 
-</div>
+**Community Groups:**
+- **Support Group**: [Join WhatsApp Group](https://chat.whatsapp.com/EdND7QAHE9w0XPYGx2ZfQw)
+- **Updates Channel**: [Follow WhatsApp Channel](https://whatsapp.com/channel/0029VbAfBzIKGGGKJWp5tT3L)
 
-<br>
+### Project Information
+
+**Repository:**
+- **GitHub**: [CARLOSGRCIAGRCIA/DolphinBotV2](https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2)
+- **License**: MIT License
+- **Maintainer**: Carlos G
+
+**Statistics:**
+```
+- Stars: Growing community
+- Forks: Active development
+- Downloads: 1000+ users
+- Last Update: February 2026
+```
+
+## Support the Project
+
+If you find DolphinBot V2 useful, consider:
+
+1. **Star the repository** on GitHub
+2. **Share with friends** and communities
+3. **Report bugs** through issues
+4. **Suggest features** for future updates
+5. **Contribute code** to improve the project
 
 ## Project Creator
 
@@ -647,9 +630,7 @@ bash diagnostico.sh
 
 ### Carlos G
 
-<sub>Full Stack Developer | Bot Creator</sub>
-
-<br>
+Full Stack Developer | Bot Creator
 
 [![Instagram](https://img.shields.io/badge/Instagram-%40carlos.gxv-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/carlos.gxv)
 [![TikTok](https://img.shields.io/badge/TikTok-%40carlos.grcia0-000000?style=for-the-badge&logo=tiktok&logoColor=white)](https://www.tiktok.com/@carlos.grcia0)
@@ -657,17 +638,11 @@ bash diagnostico.sh
 
 </div>
 
-<br>
-
 ## Project Statistics
 
 <div align="center">
 
-<!-- <img src="https://github-readme-stats.vercel.app/api?username=CARLOSGRCIAGRCIA&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=00CED1&icon_color=00CED1&text_color=fff" width="48%" /> -->
-
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=CARLOSGRCIAGRCIA&theme=tokyonight&hide_border=true&background=0D1117&stroke=00CED1&ring=00CED1&fire=00CED1&currStreakLabel=00CED1" width="48%" />
-
-<br><br>
+<!-- GitHub Stats Placeholder -->
 
 ![Stars](https://img.shields.io/github/stars/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1&logoColor=white)
 ![Forks](https://img.shields.io/github/forks/CARLOSGRCIAGRCIA/DolphinBotV2?style=for-the-badge&logo=github&color=00CED1&logoColor=white)
@@ -676,31 +651,16 @@ bash diagnostico.sh
 
 </div>
 
-<br>
+## Final Notes
 
-## Support the Project
+```
+===============================================================
+  Made with care by DolphinBot Team
+  Powered by Node.js & Baileys
+  February 2026 Update - Download System Fixed
+===============================================================
+```
 
 <div align="center">
-
-If you find this project useful, please consider:
-
-**Starring the repository**  
-**Sharing with others**  
-**Reporting bugs**  
-**Suggesting features**  
-**Contributing code**
-
-<br>
-
-```
-┌──────────────────────────────────────────┐
-│  Made with care by DolphinBot Team      │
-│  Powered by Node.js & Baileys            │
-└──────────────────────────────────────────┘
-```
-
-<br>
-
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
-
 </div>
