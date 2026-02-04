@@ -223,7 +223,7 @@ const handler = async (m, { conn, text, command }) => {
 
 👨‍💻 *Developer:* Carlos G
 📂 GitHub: CARLOSGRCIAGRCIA
-📸 Instagram: @Carlos_gxv`);
+📸 Instagram: @carlos.gxv`);
   }
 
   let tempFile = null;
@@ -266,7 +266,7 @@ const handler = async (m, { conn, text, command }) => {
 
 📞 *Support:*
 👨‍💻 Carlos G
-📸 Instagram: @Carlos_gxv`);
+📸 Instagram: @carlos.gxv`);
     }
     
     tempFile = result.filePath;
@@ -324,7 +324,7 @@ const handler = async (m, { conn, text, command }) => {
 
 📞 *Support:*
 👨‍💻 Carlos G
-📸 Instagram: @Carlos_gxv`);
+📸 Instagram: @carlos.gxv`);
   }
 };
 

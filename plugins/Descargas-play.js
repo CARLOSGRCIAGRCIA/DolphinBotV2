@@ -10,7 +10,7 @@
  * @requires yts - YouTube Search library
  * 
  * @see {@link https://github.com/CARLOSGRCIAGRCIA/DolphinBotV2|GitHub Repository}
- * @see {@link https://www.instagram.com/Carlos_gxv|Developer's Instagram}
+ * @see {@link https://www.instagram.com/carlos.gxv|Developer's Instagram}
  */
 
 import yts from 'yt-search';
@@ -68,7 +68,7 @@ Choose an option to download:
   
 👨‍💻 Developer: Carlos G
 📂 GitHub: CARLOSGRCIAGRCIA
-📸 Instagram: @Carlos_gxv
+📸 Instagram: @carlos.gxv
   \`\`\``;
 
   /**

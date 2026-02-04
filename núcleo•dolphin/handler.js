@@ -19,7 +19,6 @@ export async function handler(chatUpdate) {
   
   if (!chatUpdate) return;
   
-  // Procesar mensajes de forma más robusta
   try {
     this.pushMessage(chatUpdate.messages).catch((err) => {
       console.error(chalk.red('[HANDLER] Error al pushear mensaje:'), err);
@@ -51,14 +50,20 @@ export async function handler(chatUpdate) {
     m.exp = 0;
     m.monedas = false;
 
-    // Inicializar datos de usuario y chat de forma más robusta
+    if (!global.db.data.users) global.db.data.users = {};
+    if (!global.db.data.chats) global.db.data.chats = {};
+    if (!global.db.data.settings) global.db.data.settings = {};
+    if (!global.db.data.stats) global.db.data.stats = {};
+
     try {
       let user = global.db.data.users[m.sender];
-      if (!user || typeof user !== "object") {
-        global.db.data.users[m.sender] = user = {};
+      
+      if (!user || typeof user !== "object" || Array.isArray(user)) {
+        console.log(chalk.yellow(`[HANDLER] Inicializando usuario: ${m.sender}`));
+        global.db.data.users[m.sender] = {};
+        user = global.db.data.users[m.sender];
       }
 
-      // Inicialización de valores de usuario
       const userDefaults = {
         exp: 0,
         monedas: 10,
@@ -79,40 +84,60 @@ export async function handler(chatUpdate) {
         premium: false,
         premiumTime: 0,
         registered: false,
+        followed: false,
         genre: "",
         birth: "",
         marry: "",
         description: "",
         packstickers: null,
-        name: m.name || "Usuario",
+        name: m.name || m.pushName || "Usuario",
         age: -1,
         regTime: -1,
         afk: -1,
         afkReason: "",
         role: "Nuv",
         banned: false,
+        bannedReason: "",
         useDocument: false,
         level: 0,
         bank: 0,
-        warn: 0
+        warn: 0,
+        country: "",
+        afinidad: "",
+        nivelMagico: 0,
+        grimorioColor: ""
       };
 
       for (const [key, defaultValue] of Object.entries(userDefaults)) {
         if (!(key in user)) {
           user[key] = defaultValue;
         } else if (typeof defaultValue === 'number' && !isNumber(user[key])) {
+          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo numérico para ${key} del usuario ${m.sender}`));
           user[key] = defaultValue;
         } else if (typeof defaultValue === 'boolean' && typeof user[key] !== 'boolean') {
+          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo booleano para ${key} del usuario ${m.sender}`));
+          user[key] = defaultValue;
+        } else if (typeof defaultValue === 'string' && typeof user[key] !== 'string') {
+          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo string para ${key} del usuario ${m.sender}`));
           user[key] = defaultValue;
         }
       }
 
-      let chat = global.db.data.chats[m.chat];
-      if (!chat || typeof chat !== "object") {
-        global.db.data.chats[m.chat] = chat = {};
+      if (typeof user.registered !== 'boolean') {
+        console.log(chalk.yellow(`[HANDLER] Corrigiendo campo registered para ${m.sender}: ${user.registered} -> false`));
+        user.registered = false;
       }
       
-      // Inicialización de valores de chat
+      if (typeof user.followed !== 'boolean') {
+        user.followed = false;
+      }
+
+      let chat = global.db.data.chats[m.chat];
+      if (!chat || typeof chat !== "object" || Array.isArray(chat)) {
+        global.db.data.chats[m.chat] = {};
+        chat = global.db.data.chats[m.chat];
+      }
+      
       const chatDefaults = {
         isBanned: false,
         sAutoresponder: "",
@@ -144,8 +169,12 @@ export async function handler(chatUpdate) {
         }
       }
 
-      // Settings del bot
-      var settings = global.db.data.settings[this.user.jid] || {};
+      var settings = global.db.data.settings[this.user.jid];
+      if (!settings || typeof settings !== "object") {
+        global.db.data.settings[this.user.jid] = {};
+        settings = global.db.data.settings[this.user.jid];
+      }
+      
       const settingsDefaults = {
         self: false,
         restrict: true,
@@ -169,7 +198,6 @@ export async function handler(chatUpdate) {
     if (typeof m.text !== "string") m.text = "";
     globalThis.setting = global.db.data.settings[this.user.jid];
 
-    // Gestión de LID optimizada
     const detectwhat = m.sender.includes("@lid") ? "@lid" : "@s.whatsapp.net";
     const isROwner = [...(global.owner || []).map(([number]) => number)]
       .map((v) => v.replace(/\D/g, "") + detectwhat)
@@ -178,7 +206,6 @@ export async function handler(chatUpdate) {
     const isPrems = isROwner || global.db.data.users[m.sender].premiumTime > 0;
     const isMods = global.mods ? global.mods.map(v => v.replace(/\D/g, "") + detectwhat).includes(m.sender) : false;
 
-    // Queue management optimizado
     if (opts["queque"] && m.text && !isMods) {
       const queque = this.msgqueque;
       const previousID = queque[queque.length - 1];
@@ -191,12 +218,10 @@ export async function handler(chatUpdate) {
     let usedPrefix;
     let _user = global.db.data.users[m.sender];
 
-    // Función optimizada para obtener LID
     async function getLidFromJid(id, conn) {
       if (id.endsWith("@lid")) return id;
       
-      // Usar caché global
-      if (global.lidCache.has(id)) {
+      if (global.lidCache && global.lidCache.has(id)) {
         return global.lidCache.get(id);
       }
       
@@ -204,7 +229,9 @@ export async function handler(chatUpdate) {
         const res = await conn.onWhatsApp(id).catch(() => []);
         const lid = res[0]?.lid || id;
         
-        global.lidCache.set(id, lid);
+        if (global.lidCache) {
+          global.lidCache.set(id, lid);
+        }
         
         return lid;
       } catch (error) {
@@ -218,22 +245,23 @@ export async function handler(chatUpdate) {
     const senderJid = m.sender;
     const botJid = this.user.jid;
 
-    // Obtener metadata de grupo con caché optimizado
     const groupMetadata = m.isGroup
       ? (() => {
-          if (global.groupMetadataCache.has(m.chat)) {
+          if (global.groupMetadataCache && global.groupMetadataCache.has(m.chat)) {
             return global.groupMetadataCache.get(m.chat);
           }
           
           this.groupMetadata(m.chat)
             .then(metadata => {
-              global.groupMetadataCache.set(m.chat, metadata);
+              if (global.groupMetadataCache) {
+                global.groupMetadataCache.set(m.chat, metadata);
+              }
             })
             .catch(err => {
               console.error(chalk.red('[HANDLER] Error obteniendo metadata:'), err);
             });
           
-          return global.groupMetadataCache.get(m.chat) || {};
+          return (global.groupMetadataCache && global.groupMetadataCache.get(m.chat)) || {};
         })()
       : {};
     
@@ -266,7 +294,6 @@ export async function handler(chatUpdate) {
       "./plugins"
     );
     
-    // Procesar plugins de forma más robusta
     for (let name in global.plugins) {
       let plugin = global.plugins[name];
       if (!plugin || plugin.disabled) continue;
@@ -351,7 +378,6 @@ export async function handler(chatUpdate) {
 
         global.comando = command;
         
-        // Ignorar mensajes de bots
         if (
           m.id.startsWith("NJX-") ||
           (m.id.startsWith("BAE5") && m.id.length === 16) ||
@@ -364,27 +390,36 @@ export async function handler(chatUpdate) {
         let chat = global.db.data.chats[m.chat];
         let user = global.db.data.users[m.sender];
         
-        // Verificar ban de chat
+        if (!user || typeof user !== "object") {
+          console.log(chalk.red(`[HANDLER] Usuario ${m.sender} no existe en la DB, reinicializando...`));
+          global.db.data.users[m.sender] = {
+            exp: 0,
+            monedas: 10,
+            registered: false,
+            followed: false,
+            banned: false,
+            bannedReason: ""
+          };
+          user = global.db.data.users[m.sender];
+        }
+        
         if (
           !["grupo-unbanchat.js", "owner-exec.js", "owner-exec2.js"].includes(name) &&
           chat?.isBanned &&
           !isROwner
         ) return;
         
-        // Verificar ban de usuario  
-        if (m.text && user.banned && !isROwner) {
+        if (m.text && user.banned === true && !isROwner) {
           m.reply(
             `《✦》Estas baneado/a, no puedes usar comandos en este bot!\n\n${user.bannedReason ? `✰ *Motivo:* ${user.bannedReason}` : "✰ *Motivo:* Sin Especificar"}\n\n> ✧ Si este Bot es cuenta oficial y tiene evidencia que respalde que este mensaje es un error, puedes exponer tu caso con un moderador.`
           );
           return;
         }
 
-        // Verificar modo admin
         let adminMode = global.db.data.chats[m.chat]?.modoadmin || false;
         let mini = `${plugin.botAdmin || plugin.admin || plugin.group || plugin || noPrefix || m.text.slice(0, 1) == usedPrefix || plugin.command}`;
         if (adminMode && !isOwner && !isROwner && m.isGroup && !isAdmin && mini) return;
         
-        // Verificar permisos
         if (plugin.rowner && plugin.owner && !(isROwner || isOwner)) {
           fail("owner", m, this);
           continue;
@@ -421,9 +456,18 @@ export async function handler(chatUpdate) {
           fail("private", m, this);
           continue;
         }
-        if (plugin.register && !_user.registered) {
-          fail("unreg", m, this);
-          continue;
+        
+        if (plugin.register === true || plugin.register) {
+          if (!_user || typeof _user.registered !== 'boolean') {
+            console.log(chalk.yellow(`[HANDLER] Campo registered inválido para ${m.sender}: ${_user?.registered}`));
+            _user.registered = false;
+          }
+          
+          if (_user.registered !== true) {
+            console.log(chalk.yellow(`[HANDLER] Usuario ${m.sender} no registrado intentando usar ${command}`));
+            fail("unreg", m, this);
+            continue;
+          }
         }
 
         m.isCommand = true;
@@ -501,7 +545,6 @@ export async function handler(chatUpdate) {
   } catch (e) {
     console.error(chalk.red('[HANDLER] Error general:'), e);
   } finally {
-    // Limpiar queue
     if (opts["queque"] && m.text) {
       const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id);
       if (quequeIndex !== -1) this.msgqueque.splice(quequeIndex, 1);
@@ -509,6 +552,18 @@ export async function handler(chatUpdate) {
 
     if (m) {
       let utente = global.db.data.users[m.sender];
+      
+      if (!utente || typeof utente !== "object") {
+        console.log(chalk.red(`[HANDLER] Usuario ${m.sender} perdido al final, reinicializando...`));
+        global.db.data.users[m.sender] = {
+          exp: m.exp || 0,
+          monedas: 10,
+          registered: false,
+          followed: false
+        };
+        utente = global.db.data.users[m.sender];
+      }
+      
       if (utente.muto) {
         try {
           await this.sendMessage(m.chat, {
@@ -523,16 +578,15 @@ export async function handler(chatUpdate) {
           console.error(chalk.red('[HANDLER] Error borrando mensaje:'), error);
         }
       }
+      
       utente.exp += m.exp;
       utente.monedas -= m.monedas;
       
-      // Programar escritura de DB
       if (global.scheduleDbWrite) {
         global.scheduleDbWrite();
       }
     }
 
-    // Actualizar stats
     let stats = global.db.data.stats;
     if (m.plugin) {
       let now = +new Date();
@@ -551,7 +605,6 @@ export async function handler(chatUpdate) {
       stats[m.plugin] = stat;
     }
 
-    // Print log
     try {
       if (!opts["noprint"]) {
         await (await import("../lib/print.js")).default(m, this);
@@ -560,7 +613,6 @@ export async function handler(chatUpdate) {
       console.error(chalk.red('[HANDLER] Error en print:'), e);
     }
     
-    // Auto-read
     if (opts["autoread"]) {
       this.readMessages([m.key]).catch(() => {});
     }
@@ -570,7 +622,7 @@ export async function handler(chatUpdate) {
 global.dfail = (type, m, usedPrefix, command, conn) => {
   const msg = {
     rowner: `🛑 *ACCESO RESTRINGIDO*\n\n> Solo el *Creador Supremo* puede ejecutar este protocolo.\n\n🧬 Usuario Autorizado: 𝘾𝘼𝙍𝙇𝙊𝙎\n🔗 Sistema: root@dolphin-bot://omega/core`,
-    owner: `⚙️🔒 *MÓDULO DEV: ACCESO BLOQUEADO*\n\n> Esta función está anclada a permisos de *𝙳𝙴𝚂𝙰𝚁𝚁𝙾𝙻𝙇𝙰𝙳𝙾𝚁*.\n\n🧠 Consola de Seguridad: dev@dolphin.ai/core.sh`,
+    owner: `⚙️🔒 *MÓDULO DEV: ACCESO BLOQUEADO*\n\n> Esta función está anclada a permisos de *𝙳𝙴𝚂𝙰𝚁𝚁𝙊𝙇𝙇𝙰𝙳𝙊𝚁*.\n\n🧠 Consola de Seguridad: dev@dolphin.ai/core.sh`,
     premium: `*REQUIERE CUENTA PREMIUM*\n\n> 🚫 Módulo exclusivo para usuarios *𝙑𝙄𝙋 - 𝙋𝙍𝙀𝙈𝙄𝙐𝙈*.\n\n📡 Actualiza tu plan con: */vip*\n⚙️ Estado: denegado`,
     private: `🔒 *SOLO CHAT PRIVADO* 📲\n\n> Este comando no puede ejecutarse en grupos por razones de seguridad.\n\n🧬 Ejecuta este protocolo directamente en el chat privado.`,
     admin: `🛡️ *FUNCIÓN RESTRINGIDA*\n\n> Solo los administradores del *Grupo* tienen acceso.\n\n⚠️ Intento no autorizado.`,

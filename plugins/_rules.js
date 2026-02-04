@@ -110,7 +110,7 @@ ${availableRules}
 🐬 *DOLPHIN BOT SYSTEM*
 👨‍💻 *Developer:* Carlos G
 📂 *GitHub:* CARLOSGRCIAGRCIA
-📸 *Instagram:* @Carlos_gxv`,
+📸 *Instagram:* @carlos.gxv`,
         m
       );
     }
@@ -132,7 +132,7 @@ ${availableRules}
 📞 *Contact administrator:*
 👨‍💻 Carlos G
 📂 GitHub: CARLOSGRCIAGRCIA
-📸 Instagram: @Carlos_gxv`,
+📸 Instagram: @carlos.gxv`,
         m
       );
     }
@@ -158,7 +158,7 @@ ${availableRules}
 
 👨‍💻 *Developer:* Carlos G
 📂 *Repository:* github.com/CARLOSGRCIAGRCIA
-📸 *Instagram:* @Carlos_gxv
+📸 *Instagram:* @carlos.gxv
 
 ⚡ *Dolphin Bot v2.2.0*`,
       m
@@ -184,7 +184,7 @@ ${availableRules}
 
 📞 *Technical Support:*
 👨‍💻 Carlos G
-📸 Instagram: @Carlos_gxv
+📸 Instagram: @carlos.gxv
 📂 GitHub: CARLOSGRCIAGRCIA
 
 🐬 *Dolphin Bot System*`,
