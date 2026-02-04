@@ -35,7 +35,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       `.trim()
     }).join('\n\n─────────────────\n\n')
 
-    let img = await (await fetch(json.items[0].owner.avatar_url)).buffer()
+    let img = Buffer.from(await (await fetch(json.items[0].owner.avatar_url)).arrayBuffer())
 
     await conn.sendMini(
       m.chat, 

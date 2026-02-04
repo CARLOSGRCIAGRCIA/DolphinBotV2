@@ -2,18 +2,16 @@ import { canLevelUp, xpRange } from '../lib/levelling.js'
 import fetch from 'node-fetch'
 
 let handler = async (m, { conn }) => {
-  let img = await (await fetch(`https://telegra.ph/file/b97148e2154508f63d909.jpg`)).buffer()
+  let img = Buffer.from(await (await fetch(`https://telegra.ph/file/b97148e2154508f63d909.jpg`)).arrayBuffer())
   let name = conn.getName(m.sender)
   let user = global.db.data.users[m.sender]
 
   let before = user.level * 1
 
-  // Incrementar nivel mientras se cumpla la condición
   while (canLevelUp(user.level, user.exp, global.multiplier)) {
     user.level++
   }
 
-  // Si no subió de nivel
   if (before === user.level) {
     let { min, xp, max } = xpRange(user.level, global.multiplier)
     let txt = `🍟 *Nombre:* ${name}\n\n`
@@ -29,10 +27,8 @@ let handler = async (m, { conn }) => {
     return
   }
 
-  // Asignar rol si no tiene uno
   if (!user.role) user.role = 'Novato'
 
-  // Mensaje de felicitación
   let txt = `🎊 *F E L I C I T A C I O N E S* 🎊\n\n`
   txt += `*${before}* ➔ *${user.level}* [ ${user.role} ]\n\n`
   txt += `• 🧬 Nivel anterior : ${before}\n`

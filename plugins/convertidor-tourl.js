@@ -21,7 +21,7 @@ let handler = async (m, { conn }) => {
     let isTele = /image\/(png|jpe?g|gif)|video\/mp4/.test(mime)
     let link = await (isTele ? uploadImage : uploadFile)(media)
 
-    let img = await (await fetch(link)).buffer()
+    let img = Buffer.from(await (await fetch(link)).arrayBuffer())
 
     let txt = `乂  *L I N K - E N L A C E*  乂\n\n`
     txt += `*» Enlace* : ${link}\n`
