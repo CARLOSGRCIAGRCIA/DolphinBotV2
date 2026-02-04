@@ -23,7 +23,7 @@ const handler = async (m, { conn }) => {
     "Zoro 🗡️", "Killua ⚡", "Gon 🎯", "Kenpachi ⚔️"
   ]
 
-  const top = ["Cristo Rey 👑", "Arcángel 🕊️", "The Carlos 👑"]
+  const top = ["Cristo Rey 👑", "Arcángel 🕊️", "Carlos G"]
 
   const rand = Math.random()
   let personaje, rareza

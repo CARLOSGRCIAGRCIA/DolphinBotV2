@@ -1,187 +1,241 @@
-import fetch from "node-fetch"
 import yts from "yt-search"
-import Jimp from "jimp"
-import axios from "axios"
-import crypto from "crypto"
+import fetch from "node-fetch"
+import fs from "fs"
+import path from "path"
+import { spawn } from "child_process"
 
-async function resizeImage(buffer, size = 300) {
-  const image = await Jimp.read(buffer)
-  return image.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
+const name = 'Descargas - DolphinBot'
+
+function extractVideoId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ]
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
 }
 
-const name = 'Descargas - Dolphin Bot'
+function runCommand(cmd, args, timeout = 60000) {
+  return new Promise((resolve, reject) => {
+    const process = spawn(cmd, args)
+    let stdout = ''
+    let stderr = ''
+    
+    const timer = setTimeout(() => {
+      process.kill()
+      reject(new Error('Timeout'))
+    }, timeout)
+    
+    process.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+    
+    process.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+    
+    process.on('close', (code) => {
+      clearTimeout(timer)
+      if (code === 0) {
+        resolve(stdout)
+      } else {
+        reject(new Error(stderr || `Exit code: ${code}`))
+      }
+    })
+    
+    process.on('error', reject)
+  })
+}
 
-const savetube = {
-  api: {
-    base: "https://media.savetube.me/api",
-    info: "/v2/info",
-    download: "/download",
-    cdn: "/random-cdn"
-  },
-  headers: {
-    accept: "*/*",
-    "content-type": "application/json",
-    origin: "https://yt.savetube.me",
-    referer: "https://yt.savetube.me/",
-    "user-agent": "Postify/1.0.0"
-  },
-  crypto: {
-    hexToBuffer: (hexString) => {
-      const matches = hexString.match(/.{1,2}/g)
-      return Buffer.from(matches.join(""), "hex")
-    },
-    decrypt: async (enc) => {
-      const secretKey = "C5D58EF67A7584E4A29F6C35BBC4EB12"
-      const data = Buffer.from(enc, "base64")
-      const iv = data.slice(0, 16)
-      const content = data.slice(16)
-      const key = savetube.crypto.hexToBuffer(secretKey)
-      const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv)
-      let decrypted = decipher.update(content)
-      decrypted = Buffer.concat([decrypted, decipher.final()])
-      return JSON.parse(decrypted.toString())
+async function downloadSimple(videoId, type = 'audio') {
+  try {
+    const tempDir = './temp_downloads'
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true })
     }
-  },
-  isUrl: (str) => {
+    
+    const outputFile = `${tempDir}/${videoId}_${Date.now()}.${type === 'audio' ? 'mp3' : 'mp4'}`
+    
     try {
-      new URL(str)
-      return /youtube.com|youtu.be/.test(str)
-    } catch {
-      return false
-    }
-  },
-  youtube: (url) => {
-    const patterns = [
-      /youtube.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-      /youtube.com\/embed\/([a-zA-Z0-9_-]{11})/,
-      /youtu.be\/([a-zA-Z0-9_-]{11})/
-    ]
-    for (let pattern of patterns) {
-      const match = url.match(pattern)
-      if (match) return match[1]
-    }
-    return null
-  },
-  request: async (endpoint, data = {}, method = "post") => {
+      const cmd = type === 'audio' 
+        ? ['youtube-dl', '-x', '--audio-format', 'mp3', '-o', outputFile, `https://youtu.be/${videoId}`]
+        : ['youtube-dl', '-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      
+      await runCommand(cmd[0], cmd.slice(1), 120000)
+      
+      if (fs.existsSync(outputFile)) {
+        return { success: true, filePath: outputFile, title: 'YouTube Download' }
+      }
+    } catch {}
+    
     try {
-      const { data: response } = await axios({
-        method,
-        url: `${endpoint.startsWith("http") ? "" : savetube.api.base}${endpoint}`,
-        data: method === "post" ? data : undefined,
-        params: method === "get" ? data : undefined,
-        headers: savetube.headers
-      })
-      return { status: true, code: 200, data: response }
-    } catch (error) {
-      return { status: false, code: error.response?.status || 500, error: error.message }
-    }
-  },
-  getCDN: async () => {
-    const response = await savetube.request(savetube.api.cdn, {}, "get")
-    if (!response.status) return response
-    return { status: true, code: 200, data: response.data.cdn }
-  },
-  download: async (link, type = "audio") => {
-    if (!savetube.isUrl(link)) return { status: false, code: 400, error: "URL inválida" }
-    const id = savetube.youtube(link)
-    if (!id) return { status: false, code: 400, error: "No se pudo obtener el ID del video" }
+      const cmd = type === 'audio'
+        ? ['yt-dlp', '-x', '--audio-format', 'mp3', '-o', outputFile, `https://youtu.be/${videoId}`]
+        : ['yt-dlp', '-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      
+      await runCommand(cmd[0], cmd.slice(1), 120000)
+      
+      if (fs.existsSync(outputFile)) {
+        return { success: true, filePath: outputFile, title: 'YouTube Download' }
+      }
+    } catch {}
+    
     try {
-      const cdnx = await savetube.getCDN()
-      if (!cdnx.status) return cdnx
-      const cdn = cdnx.data
-      const videoInfo = await savetube.request(`https://${cdn}${savetube.api.info}`, { url: `https://www.youtube.com/watch?v=${id}` })
-      if (!videoInfo.status || !videoInfo.data?.data) return { status: false, code: 500, error: "No se pudo obtener información del video" }
-      const decrypted = await savetube.crypto.decrypt(videoInfo.data.data)
-      const downloadData = await savetube.request(
-        `https://${cdn}${savetube.api.download}`,
-        { id, downloadType: type === "audio" ? "audio" : "video", quality: type === "audio" ? "mp3" : "720p", key: decrypted.key }
-      )
-      if (!downloadData?.data?.data?.downloadUrl) return { status: false, code: 500, error: "No se pudo obtener link de descarga" }
-      return {
-        status: true,
-        code: 200,
-        result: {
-          title: decrypted.title || "Desconocido",
-          author: decrypted.channel || "Desconocido",
-          views: decrypted.viewCount || "Desconocido",
-          timestamp: decrypted.lengthSeconds || "0",
-          ago: decrypted.uploadedAt || "Desconocido",
-          format: type === "audio" ? "mp3" : "mp4",
-          download: downloadData.data.data.downloadUrl,
-          thumbnail: decrypted.thumbnail || null
-        }
+      const ytDlpPath = './yt-dlp-bin'
+      if (!fs.existsSync(ytDlpPath)) {
+        console.log('Descargando yt-dlp...')
+        const resp = await fetch('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp')
+        const buffer = await resp.arrayBuffer()
+        fs.writeFileSync(ytDlpPath, Buffer.from(buffer))
+        fs.chmodSync(ytDlpPath, 0o755)
+      }
+      
+      const cmd = type === 'audio'
+        ? [ytDlpPath, '-x', '--audio-format', 'mp3', '-o', outputFile, `https://youtu.be/${videoId}`]
+        : [ytDlpPath, '-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      
+      await runCommand(cmd[0], cmd.slice(1), 180000)
+      
+      if (fs.existsSync(outputFile)) {
+        return { success: true, filePath: outputFile, title: 'YouTube Download' }
       }
     } catch (error) {
-      return { status: false, code: 500, error: error.message }
+      console.error('Error con yt-dlp binario:', error)
     }
+    
+    return { success: false, error: 'No se pudo descargar' }
+    
+  } catch (error) {
+    console.error('Error en downloadSimple:', error)
+    return { success: false, error: error.message }
   }
 }
 
 const handler = async (m, { conn, text, command }) => {
   await m.react("⌛")
-  if (!text?.trim()) return conn.reply(m.chat, "Dame el link de YouTube o el nombre XD", m)
+  
+  if (!text?.trim()) {
+    await m.react("❌")
+    return m.reply(`🎵 *DESCARGAS SIMPLIFICADAS*
+
+📝 *Comandos:*
+.ytmp3 <búsqueda/url> - Audio MP3
+.ytmp4doc <búsqueda/url> - Video MP4
+
+💡 *Ejemplos:*
+.ytmp3 "canción"
+.ytmp4doc "video corto"
+
+⚠️ *Primera vez:* Se descargará yt-dlp automáticamente`)
+  }
+
+  let tempFile = null
+  
   try {
-    let url, title, thumbnail, author, vistas, timestamp, ago
-    if (savetube.isUrl(text)) {
-      const id = savetube.youtube(text)
-      const search = await yts({ videoId: id })
-      url = text
-      title = search.title || "Desconocido"
-      thumbnail = search.thumbnail
-      author = search.author?.name || "Desconocido"
-      vistas = search.views?.toLocaleString?.() || "Desconocido"
-      timestamp = search.timestamp || "Desconocido"
-      ago = search.ago || "Desconocido"
-    } else {
-      const search = await yts.search({ query: text, pages: 1 })
-      if (!search.videos.length) return m.reply("❌ ¡Ni con el radar del dragón encontré ese video!")
-      const videoInfo = search.videos[0]
-      url = videoInfo.url
-      title = videoInfo.title
-      thumbnail = videoInfo.thumbnail
-      author = videoInfo.author?.name || "Desconocido"
-      vistas = videoInfo.views?.toLocaleString?.() || "Desconocido"
-      timestamp = videoInfo.timestamp || "Desconocido"
-      ago = videoInfo.ago || "Desconocido"
-    }
-    const thumbResized = await resizeImage(await (await fetch(thumbnail)).buffer(), 300)
-    const res3 = await fetch("https://qu.ax/gPaVW.jpg")
-    const thumb3 = Buffer.from(await res3.arrayBuffer())
-    const fkontak = {
-      key: { fromMe: false, participant: "0@s.whatsapp.net" },
-      message: {
-        documentMessage: {
-          title: `👑「 ${title} 」📿`,
-          fileName: `${name}`,
-          jpegThumbnail: thumb3
-        }
+    let videoId, videoTitle
+    
+    if (text.includes('youtube.com') || text.includes('youtu.be')) {
+      videoId = extractVideoId(text)
+      if (!videoId) {
+        await m.react("❌")
+        return m.reply("❌ URL no válida")
       }
+      
+      const search = await yts({ videoId })
+      videoTitle = search.title || "YouTube Video"
+    } else {
+      await m.react("🔍")
+      const search = await yts.search({ query: text, pages: 1 })
+      
+      if (!search.videos.length) {
+        await m.react("❌")
+        return m.reply("❌ No encontré resultados")
+      }
+      
+      videoId = search.videos[0].videoId
+      videoTitle = search.videos[0].title
     }
-    if (["ytmp3doc"].includes(command)) {
-      await m.react("✅")
-      const dl = await savetube.download(url, "audio")
-      if (!dl.status) return m.reply(`❌ Error zorra: ${dl.error}`)
-      await conn.sendMessage(
-        m.chat,
-        {
-          document: { url: dl.result.download },
-          mimetype: "audio/mpeg",
-          fileName: `${dl.result.title}.mp3`,
-          caption: `${dl.result.title}`,
-          jpegThumbnail: thumbResized
-        },
-        { quoted: fkontak }
-      )
-      return
+    
+    console.log(`Buscando: ${videoTitle.substring(0, 60)}`)
+    
+    const type = command === 'ytmp3' ? 'audio' : 'video'
+    await m.react("📥")
+    
+    const progressMsg = await m.reply(`Dolphin Bot esta Descargando: ${videoTitle.substring(0, 50)}...`)
+    
+    const result = await downloadSimple(videoId, type)
+    
+    if (!result.success) {
+      await m.react("❌")
+      return m.reply(`❌ Error: ${result.error}
+
+🔧 *SOLUCIÓN:*
+1. Instala youtube-dl (más fácil):
+   \`sudo pacman -S youtube-dl\`
+
+2. O crea entorno virtual:
+   \`\`\`bash
+   cd ~/Documents/bot/DolphinBotV2
+   python -m venv venv
+   source venv/bin/activate
+   pip install yt-dlp
+   \`\`\``)
     }
+    
+    tempFile = result.filePath
+    
+    if (type === 'audio') {
+      await conn.sendMessage(m.chat, {
+        audio: fs.readFileSync(tempFile),
+        mimetype: "audio/mpeg",
+        fileName: `${videoTitle.substring(0, 70).replace(/[^\w\s.-]/g, '_')}.mp3`
+      }, { quoted: m })
+    } else {
+      await conn.sendMessage(m.chat, {
+        document: fs.readFileSync(tempFile),
+        mimetype: "video/mp4",
+        fileName: `${videoTitle.substring(0, 70).replace(/[^\w\s.-]/g, '_')}.mp4`,
+        caption: `🎬 ${videoTitle}`
+      }, { quoted: m })
+    }
+    
+    try {
+      await conn.sendMessage(m.chat, { delete: progressMsg.key })
+    } catch {}
+    
+    await m.react("✅")
+    
+    setTimeout(() => {
+      if (tempFile && fs.existsSync(tempFile)) {
+        try {
+          fs.unlinkSync(tempFile)
+        } catch {}
+      }
+    }, 30000)
+    
   } catch (error) {
-    console.error("❌ Error:", error)
-    return m.reply(`💢 Error perra: ${error.message}`)
+    await m.react("❌")
+    console.error("ERROR:", error)
+    
+    if (tempFile && fs.existsSync(tempFile)) {
+      try { fs.unlinkSync(tempFile) } catch {}
+    }
+    
+    return m.reply(`Error: ${error.message}
+
+🛠️ *Instala YOUTUBE-DL (más fácil):*
+\`sudo pacman -S youtube-dl ffmpeg\`
+
+Luego prueba de nuevo.`)
   }
 }
 
-handler.command = ["ytmp3doc"]
-handler.help = ["ytmp3doc"]
+handler.command = ["ytmp4doc", "ytmp3"]
+handler.help = ["ytmp4doc <búsqueda/url>", "ytmp3 <búsqueda/url>"]
 handler.tags = ["descargas"]
 
 export default handler

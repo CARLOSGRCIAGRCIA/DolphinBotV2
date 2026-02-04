@@ -6,7 +6,7 @@ function precioAleatorio(min, max) {
 const personajesTop = [
   { nombre: 'Cristo rey 👑', precio: 20000000, habilidad: '✝️ Resurrección divina y control de todo el universo. Es el personaje más caro de todos.' },
   { nombre: 'Arcangel Supremo 😇', precio: precioAleatorio(5000000, 9999999), habilidad: '🛡 Protección celestial y fuego purificador.' },
-  { nombre: 'The Carlos 🧠', precio: precioAleatorio(5000000, 9999999), habilidad: '💻 Maestro del código y hacker de grimorios.' },
+  { nombre: 'Carlos G', precio: precioAleatorio(5000000, 9999999), habilidad: '💻 Maestro del código y hacker de grimorios.' },
   { nombre: 'Dios del Tiempo ⏳', precio: precioAleatorio(5000000, 9999999), habilidad: '🌀 Controla el tiempo y revierte el destino.' },
   { nombre: 'Dragón Ancestral 🐉', precio: precioAleatorio(5000000, 9999999), habilidad: '🔥 Fuego que consume realidades enteras.' },
   { nombre: 'Samurai de la Sombra ⚔️', precio: precioAleatorio(5000000, 9999999), habilidad: '🌑 Técnica prohibida bajo luna sangrienta.' },

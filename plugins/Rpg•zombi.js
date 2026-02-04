@@ -48,7 +48,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     '🧟‍♂️ *¡Su valentía no servirá de nada!*', '🧟‍♂️ *¡Este mundo me pertenece!*'
   ]
 
-  const personajesTop = ['Arcangel Supremo 😇', 'The Carlos 🧠', 'Dios del Tiempo ⏳', 'Dragón Ancestral 🐉']
+  const personajesTop = ['Arcangel Supremo 😇', 'Carlos G', 'Dios del Tiempo ⏳', 'Dragón Ancestral 🐉']
   const personajesElite = ['Samurai de la Sombra ⚔️', 'Dios Guerrero 🪖', 'Hechicero Supremo 🧙‍♂️', 'Titán del Infinito 👹', 'Alma del Vacío 👻']
 
   let resultado = `🧟‍♂️ *¡La invasión zombie continúa!* 🧟‍♂️\n\n`

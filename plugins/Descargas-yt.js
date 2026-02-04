@@ -1,203 +1,318 @@
-import fetch from "node-fetch"
 import yts from "yt-search"
-import Jimp from "jimp"
-import axios from "axios"
-import crypto from "crypto"
-
-async function resizeImage(buffer, size = 300) {
-  const image = await Jimp.read(buffer)
-  return image.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
-}
+import fetch from "node-fetch"
+import fs from "fs"
+import path from "path"
+import { spawn } from "child_process"
+import os from "os"
 
 const name = 'Descargas - DolphinBot'
 
-const savetube = {
-  api: {
-    base: "https://media.savetube.me/api",
-    info: "/v2/info",
-    download: "/download",
-    cdn: "/random-cdn"
-  },
-  headers: {
-    accept: "*/*",
-    "content-type": "application/json",
-    origin: "https://yt.savetube.me",
-    referer: "https://yt.savetube.me/",
-    "user-agent": "Postify/1.0.0"
-  },
-  crypto: {
-    hexToBuffer: (hexString) => {
-      const matches = hexString.match(/.{1,2}/g)
-      return Buffer.from(matches.join(""), "hex")
-    },
-    decrypt: async (enc) => {
-      const secretKey = "C5D58EF67A7584E4A29F6C35BBC4EB12"
-      const data = Buffer.from(enc, "base64")
-      const iv = data.slice(0, 16)
-      const content = data.slice(16)
-      const key = savetube.crypto.hexToBuffer(secretKey)
-      const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv)
-      let decrypted = decipher.update(content)
-      decrypted = Buffer.concat([decrypted, decipher.final()])
-      return JSON.parse(decrypted.toString())
-    }
-  },
-  isUrl: (str) => {
-    try {
-      new URL(str)
-      return /youtube.com|youtu.be/.test(str)
-    } catch {
-      return false
-    }
-  },
-  youtube: (url) => {
-    const patterns = [
-      /youtube.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-      /youtube.com\/embed\/([a-zA-Z0-9_-]{11})/,
-      /youtu.be\/([a-zA-Z0-9_-]{11})/
-    ]
-    for (let pattern of patterns) {
-      const match = url.match(pattern)
-      if (match) return match[1]
-    }
-    return null
-  },
-  request: async (endpoint, data = {}, method = "post") => {
-    try {
-      const { data: response } = await axios({
-        method,
-        url: `${endpoint.startsWith("http") ? "" : savetube.api.base}${endpoint}`,
-        data: method === "post" ? data : undefined,
-        params: method === "get" ? data : undefined,
-        headers: savetube.headers
-      })
-      return { status: true, code: 200, data: response }
-    } catch (error) {
-      return { status: false, code: error.response?.status || 500, error: error.message }
-    }
-  },
-  getCDN: async () => {
-    const response = await savetube.request(savetube.api.cdn, {}, "get")
-    if (!response.status) return response
-    return { status: true, code: 200, data: response.data.cdn }
-  },
-  download: async (link, type = "video") => {
-    if (!savetube.isUrl(link)) return { status: false, code: 400, error: "URL inválida" }
-    const id = savetube.youtube(link)
-    if (!id) return { status: false, code: 400, error: "No se pudo obtener el ID del video" }
-    try {
-      const cdnx = await savetube.getCDN()
-      if (!cdnx.status) return cdnx
-      const cdn = cdnx.data
-      const videoInfo = await savetube.request(`https://${cdn}${savetube.api.info}`, { url: `https://www.youtube.com/watch?v=${id}` })
-      if (!videoInfo.status || !videoInfo.data?.data) return { status: false, code: 500, error: "No se pudo obtener información del video" }
-      const decrypted = await savetube.crypto.decrypt(videoInfo.data.data)
-      const downloadData = await savetube.request(
-        `https://${cdn}${savetube.api.download}`,
-        { id, downloadType: type === "audio" ? "audio" : "video", quality: type === "audio" ? "mp3" : "720p", key: decrypted.key }
-      )
-      if (!downloadData?.data?.data?.downloadUrl) return { status: false, code: 500, error: "No se pudo obtener link de descarga" }
-      return {
-        status: true,
-        code: 200,
-        result: {
-          title: decrypted.title || "",
-          author: decrypted.channel || "",
-          views: decrypted.viewCount || "",
-          timestamp: decrypted.lengthSeconds || "",
-          ago: decrypted.uploadedAt || "",
-          format: type === "audio" ? "mp3" : "mp4",
-          download: downloadData.data.data.downloadUrl,
-          thumbnail: decrypted.thumbnail || ""
-        }
+const isTermux = process.env.PREFIX && process.env.PREFIX.includes('com.termux')
+
+function extractVideoId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ]
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
+}
+
+function runCommand(cmd, args, timeout = 90000) {
+  return new Promise((resolve, reject) => {
+    const process = spawn(cmd, args)
+    let stdout = ''
+    let stderr = ''
+    
+    const timer = setTimeout(() => {
+      process.kill()
+      reject(new Error('Timeout'))
+    }, timeout)
+    
+    process.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+    
+    process.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+    
+    process.on('close', (code) => {
+      clearTimeout(timer)
+      if (code === 0) {
+        resolve(stdout)
+      } else {
+        reject(new Error(stderr || `Exit code: ${code}`))
       }
-    } catch (error) {
-      return { status: false, code: 500, error: error.message }
+    })
+    
+    process.on('error', reject)
+  })
+}
+
+async function downloadForTermux(videoId, type = 'audio') {
+  try {
+    const tempDir = isTermux 
+      ? '/data/data/com.termux/files/usr/tmp/dolphinbot'
+      : './temp_downloads'
+    
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true })
     }
+    
+    const outputFile = `${tempDir}/${videoId}_${Date.now()}.${type === 'audio' ? 'mp3' : 'mp4'}`
+    
+    console.log(`📁 Temp dir: ${tempDir}`)
+    console.log(`📄 Output: ${outputFile}`)
+    
+    const methods = [
+      {
+        name: 'youtube-dl',
+        cmd: 'youtube-dl',
+        args: type === 'audio' 
+          ? ['-x', '--audio-format', 'mp3', '-o', outputFile, `https://youtu.be/${videoId}`]
+          : ['-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      },
+      {
+        name: 'yt-dlp',
+        cmd: 'yt-dlp',
+        args: type === 'audio'
+          ? ['-x', '--audio-format', 'mp3', '--audio-quality', '0', '-o', outputFile, `https://youtu.be/${videoId}`]
+          : ['-f', 'best[height<=480]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      },
+      {
+        name: 'python-ytdlp',
+        cmd: 'python',
+        args: type === 'audio'
+          ? ['-m', 'yt_dlp', '-x', '--audio-format', 'mp3', '-o', outputFile, `https://youtu.be/${videoId}`]
+          : ['-m', 'yt_dlp', '-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      }
+    ]
+    
+    for (const method of methods) {
+      try {
+        console.log(`🔄 Termux: Intentando con ${method.name}...`)
+        
+        await runCommand(method.cmd, method.args, 180000)
+        
+        if (fs.existsSync(outputFile)) {
+          const stats = fs.statSync(outputFile)
+          const sizeMB = (stats.size / (1024 * 1024)).toFixed(2)
+          
+          console.log(`✅ ${method.name} funcionó: ${sizeMB} MB`)
+          
+          return {
+            success: true,
+            filePath: outputFile,
+            size: sizeMB,
+            source: method.name
+          }
+        }
+      } catch (error) {
+        console.log(`❌ ${method.name} falló:`, error.message)
+        continue
+      }
+    }
+    
+    return await downloadYtDlpAndRetry(videoId, type, tempDir, outputFile)
+    
+  } catch (error) {
+    console.error('💥 Error en downloadForTermux:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+async function downloadYtDlpAndRetry(videoId, type, tempDir, outputFile) {
+  try {
+    console.log('📥 Descargando yt-dlp para Termux...')
+    
+    const ytDlpPath = `${tempDir}/yt-dlp-termux`
+    const resp = await fetch('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp')
+    const buffer = await resp.arrayBuffer()
+    fs.writeFileSync(ytDlpPath, Buffer.from(buffer))
+    fs.chmodSync(ytDlpPath, 0o755)
+    
+    const args = type === 'audio'
+      ? ['-x', '--audio-format', 'mp3', '--audio-quality', '0', '-o', outputFile, `https://youtu.be/${videoId}`]
+      : ['-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`]
+    
+    await runCommand(ytDlpPath, args, 240000)
+    
+    if (fs.existsSync(outputFile)) {
+      const stats = fs.statSync(outputFile)
+      const sizeMB = (stats.size / (1024 * 1024)).toFixed(2)
+      
+      return {
+        success: true,
+        filePath: outputFile,
+        size: sizeMB,
+        source: 'yt-dlp-descargado'
+      }
+    }
+    
+    return { success: false, error: 'No se pudo descargar' }
+    
+  } catch (error) {
+    console.error('Error descargando yt-dlp:', error)
+    return { success: false, error: 'Instala youtube-dl: pkg install youtube-dl' }
   }
 }
 
 const handler = async (m, { conn, text, command }) => {
   await m.react("⌛")
-  if (!text?.trim()) return conn.reply(m.chat, "Dame el link de YouTube o el nombre XD", m)
+  
+  const envInfo = isTermux ? '📱 TERMUX' : '💻 MANJARO'
+  
+  if (!text?.trim()) {
+    await m.react("❌")
+    return m.reply(`🎵 *DOLPHINBOT - ${envInfo}*
+
+📝 *COMANDOS:*
+• .ytmp3 <búsqueda/url> - Audio MP3
+• .ytmp4 <búsqueda/url> - Video normal
+• .ytmp4doc <búsqueda/url> - Video como documento
+• .installtermux - Instalar dependencias
+
+💡 *EJEMPLOS:*
+.ytmp3 shakira
+.ytmp4 tutorial android
+.ytmp4doc https://youtu.be/xxxx
+
+${isTermux ? '📱 *TERMUX:* Usa videos cortos (<10 min) para mejor rendimiento' : ''}`)
+  }
+
+  let tempFile = null
+  
   try {
-    let url, title, thumbnail
-    if (savetube.isUrl(text)) {
-      const id = savetube.youtube(text)
-      const search = await yts({ videoId: id })
-      url = text
-      title = search.title || ""
-      thumbnail = search.thumbnail
+    let videoId, videoTitle
+    
+    if (text.includes('youtube.com') || text.includes('youtu.be')) {
+      videoId = extractVideoId(text)
+      if (!videoId) {
+        await m.react("❌")
+        return m.reply("❌ URL no válida")
+      }
+      
+      const search = await yts({ videoId })
+      videoTitle = search.title || "YouTube Video"
     } else {
+      await m.react("🔍")
       const search = await yts.search({ query: text, pages: 1 })
-      if (!search.videos.length) return m.reply("❌ ¡Ni con el radar del dragón encontré ese video!")
-      const videoInfo = search.videos[0]
-      url = videoInfo.url
-      title = videoInfo.title
-      thumbnail = videoInfo.thumbnail
-    }
-    const thumbResized = await resizeImage(await (await fetch(thumbnail)).buffer(), 300)
-    const res3 = await fetch("https://qu.ax/xCgVW.jpg")
-    const thumb3 = Buffer.from(await res3.arrayBuffer())
-    const fkontak = {
-      key: { fromMe: false, participant: "0@s.whatsapp.net" },
-      message: {
-        documentMessage: {
-          title: `🎬「 ${title} 」⚡`,
-          fileName: `${name}`,
-          jpegThumbnail: thumb3
-        }
+      
+      if (!search.videos.length) {
+        await m.react("❌")
+        return m.reply("❌ No encontré resultados")
       }
+      
+      videoId = search.videos[0].videoId
+      videoTitle = search.videos[0].title
     }
-    if (["ytmp4doc"].includes(command)) {
-      await m.react("⌛")
-      const dl = await savetube.download(url, "video")
-      if (!dl.status) {
-        await m.react("✖️")
-        return m.reply(`❌ Error zorra: ${dl.error}`)
+    
+    console.log(`${envInfo}: ${videoTitle.substring(0, 60)}`)
+    
+    const type = command === 'ytmp3' ? 'audio' : 'video'
+    await m.react("📥")
+    
+    const progressMsg = await m.reply(`⬇️ *${envInfo} - Descargando...*\n${videoTitle.substring(0, 50)}`)
+    
+    const result = isTermux 
+      ? await downloadForTermux(videoId, type)
+      : await downloadForTermux(videoId, type)
+    
+    if (!result.success) {
+      await m.react("❌")
+      
+      const errorMsg = isTermux
+        ? `❌ *ERROR EN TERMUX*\n\n${result.error}\n\n🔧 *SOLUCIÓN:*\n\`\`\`bash\npkg install youtube-dl ffmpeg\n\`\`\`\nO usa: .installtermux`
+        : `❌ *ERROR*\n\n${result.error}\n\n🔧 *SOLUCIÓN:*\n\`sudo pacman -S youtube-dl\``
+      
+      return m.reply(errorMsg)
+    }
+    
+    tempFile = result.filePath
+    
+    const maxSize = isTermux 
+      ? (type === 'video' ? 30 : 50) 
+      : (type === 'video' ? 100 : 200)
+    
+    if (parseFloat(result.size) > maxSize) {
+      await m.react("⚠️")
+      fs.unlinkSync(tempFile)
+      
+      const sizeError = isTermux
+        ? `⚠️ *Muy grande para Termux*\n\n${result.size} MB > ${maxSize} MB\n\n📱 En Termux usa videos más cortos (<5 min)`
+        : `⚠️ *Muy grande*\n\n${result.size} MB > ${maxSize} MB\n\n💡 Busca un video más corto`
+      
+      return m.reply(sizeError)
+    }
+    
+    const safeTitle = videoTitle
+      .replace(/[<>:"/\\|?*]/g, '_')
+      .substring(0, 60)
+    
+    if (type === 'audio') {
+      await conn.sendMessage(m.chat, {
+        audio: fs.readFileSync(tempFile),
+        mimetype: "audio/mpeg",
+        fileName: `${safeTitle}.mp3`,
+        ptt: false
+      }, { quoted: m })
+    } else if (command === 'ytmp4') {
+      await conn.sendMessage(m.chat, {
+        video: fs.readFileSync(tempFile),
+        mimetype: "video/mp4",
+        caption: `🎬 ${videoTitle}\n📊 ${result.size} MB | ${envInfo}`
+      }, { quoted: m })
+    } else {
+      await conn.sendMessage(m.chat, {
+        document: fs.readFileSync(tempFile),
+        mimetype: "video/mp4",
+        fileName: `${safeTitle}.mp4`,
+        caption: `🎬 ${videoTitle}\n📦 ${result.size} MB | ${envInfo}`
+      }, { quoted: m })
+    }
+    
+    try {
+      await conn.sendMessage(m.chat, { delete: progressMsg.key })
+    } catch {}
+    
+    await m.react("✅")
+    
+    setTimeout(() => {
+      if (tempFile && fs.existsSync(tempFile)) {
+        try {
+          fs.unlinkSync(tempFile)
+          console.log('Archivo eliminado')
+        } catch {}
       }
-      try {
-        const { headers } = await axios.head(dl.result.download)
-        const fileSize = parseInt(headers["content-length"] || 0)
-        if (fileSize > 629145600) {
-          await m.react("✖️")
-          return m.reply("⚠️ El archivo supera los 600 MB, no puedo enviarlo.")
-        }
-      } catch {}
-      await conn.sendMessage(
-        m.chat,
-        {
-          document: { url: dl.result.download },
-          mimetype: "video/mp4",
-          fileName: `${dl.result.title}.mp4`,
-          jpegThumbnail: thumbResized,
-          caption: `🎬 *${dl.result.title}*`
-        },
-        { quoted: fkontak }
-      )
-      await m.react("✅")
-      return
-    }
-    if (["ytmp3"].includes(command)) {
-      await m.react("✅")
-      const dl = await savetube.download(url, "audio")
-      if (!dl.status) return m.reply(`❌ Error zorra: ${dl.error}`)
-      await conn.sendMessage(
-        m.chat,
-        { audio: { url: dl.result.download }, mimetype: "audio/mpeg", fileName: `${dl.result.title}.mp3` },
-        { quoted: fkontak }
-      )
-      return
-    }
+    }, isTermux ? 20000 : 30000)
+    
   } catch (error) {
-    await m.react("✖️")
-    console.error("❌ Error:", error)
-    return m.reply(`💢 Error perra: ${error.message}`)
+    await m.react("❌")
+    console.error("💥 ERROR:", error)
+    
+    if (tempFile && fs.existsSync(tempFile)) {
+      try { fs.unlinkSync(tempFile) } catch {}
+    }
+    
+    const errorResponse = isTermux
+      ? `💥 *ERROR TERMUX*\n\n${error.message}\n\n🔧 Corre:\n\`.installtermux\`\nO manual:\n\`pkg install youtube-dl ffmpeg python nodejs\``
+      : `💥 *ERROR*\n\n${error.message}\n\n🔧 Instala:\n\`sudo pacman -S youtube-dl ffmpeg\``
+    
+    return m.reply(errorResponse)
   }
 }
 
-handler.command = ["ytmp4doc", "ytmp3"]
-handler.help = ["ytmp4doc", "ytmp3"]
+handler.command = ["ytmp4doc", "ytmp3", "ytmp4"]
+handler.help = [
+  "ytmp4doc <búsqueda/url> - Video como documento",
+  "ytmp3 <búsqueda/url> - Audio MP3", 
+  "ytmp4 <búsqueda/url> - Video normal"
+]
 handler.tags = ["descargas"]
 
 export default handler

@@ -6,7 +6,7 @@ let handler = async (m, { command, conn }) => {
   try {
     let res = (await axios.get(`https://raw.githubusercontent.com/davidprospero123/api-anime/main/BOT-JSON/anime-${command}.json`)).data
     let image = res[Math.floor(Math.random() * res.length)]
-    let caption = `*${command}*\n\nCogido hecho x The Carlos 👑`
+    let caption = `*${command}*\n\nCogido hecho x Carlos G`
 
     let imgFolder = path.join('./src/img')
     let imgFiles = fs.existsSync(imgFolder) ? fs.readdirSync(imgFolder).filter(f => /\.(jpe?g|png|webp)$/i.test(f)) : []
