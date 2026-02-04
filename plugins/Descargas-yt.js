@@ -292,7 +292,7 @@ ${isTermux ? '📱 *TERMUX:* Use short videos (<10 min) for better performance' 
 
 👨‍💻 *Developer:* Carlos G
 📂 GitHub: CARLOSGRCIAGRCIA
-📸 Instagram: @Carlos_gxv`);
+📸 Instagram: @carlos.gxv`);
   }
 
   let tempFile = null;

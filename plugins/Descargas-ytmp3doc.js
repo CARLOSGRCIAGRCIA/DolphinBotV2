@@ -230,7 +230,7 @@ const handler = async (m, { conn, text, command }) => {
 
 👨‍💻 *Developer:* Carlos G
 📂 GitHub: CARLOSGRCIAGRCIA
-📸 Instagram: @Carlos_gxv`);
+📸 Instagram: @carlos.gxv`);
   }
 
   let tempFile = null;
@@ -289,7 +289,7 @@ const handler = async (m, { conn, text, command }) => {
    \`\`\`
 
 👨‍💻 Need help? Contact:
-📸 Instagram: @Carlos_gxv
+📸 Instagram: @carlos.gxv
 📂 GitHub: CARLOSGRCIAGRCIA`);
     }
     
@@ -352,7 +352,7 @@ Then try again.
 
 📞 *Support:*
 👨‍💻 Carlos G
-📸 Instagram: @Carlos_gxv
+📸 Instagram: @carlos.gxv
 📂 GitHub: CARLOSGRCIAGRCIA`);
   }
 };
