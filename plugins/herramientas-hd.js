@@ -37,7 +37,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     const json = await res.json()
     if (!json?.result_url || !json.result_url.startsWith('http')) throw new Error('No se pudo obtener la URL del resultado.')
 
-    const resultBuffer = await (await fetch(json.result_url)).buffer()
+    const resultBuffer = Buffer.from(await (await fetch(json.result_url)).arrayBuffer())
 
     await conn.sendMessage(m.chat, {
       image: resultBuffer,

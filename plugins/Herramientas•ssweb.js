@@ -9,7 +9,7 @@ title: packname,
 body: dev,
 previewType: 0, thumbnail: icons, 
 sourceUrl: channel }}})
-let ss = await (await fetch(`https://image.thum.io/get/fullpage/${args[0]}`)).buffer()
+let ss = Buffer.from(await (await fetch(`https://image.thum.io/get/fullpage/${args[0]}`)).arrayBuffer())
 conn.sendFile(m.chat, ss, 'error.png', args[0], fkontak)
 await m.react(done)
 } catch {
