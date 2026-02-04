@@ -1,200 +1,226 @@
-import fetch from "node-fetch"
 import yts from "yt-search"
-import Jimp from "jimp"
-import axios from "axios"
-import crypto from "crypto"
+import fetch from "node-fetch"
+import fs from "fs"
+import path from "path"
+import { spawn } from "child_process"
 
-async function resizeImage(buffer, size = 300) {
-  const image = await Jimp.read(buffer)
-  return image.resize(size, size).getBufferAsync(Jimp.MIME_JPEG)
+function extractVideoId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ]
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
 }
 
-const savetube = {
-  api: {
-    base: "https://media.savetube.me/api",
-    info: "/v2/info",
-    download: "/download",
-    cdn: "/random-cdn"
-  },
-  headers: {
-    accept: "*/*",
-    "content-type": "application/json",
-    origin: "https://yt.savetube.me",
-    referer: "https://yt.savetube.me/",
-    "user-agent": "Postify/1.0.0"
-  },
-  crypto: {
-    hexToBuffer: (hexString) => {
-      const matches = hexString.match(/.{1,2}/g)
-      return Buffer.from(matches.join(""), "hex")
-    },
-    decrypt: async (enc) => {
-      const secretKey = "C5D58EF67A7584E4A29F6C35BBC4EB12"
-      const data = Buffer.from(enc, "base64")
-      const iv = data.slice(0, 16)
-      const content = data.slice(16)
-      const key = savetube.crypto.hexToBuffer(secretKey)
-      const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv)
-      let decrypted = decipher.update(content)
-      decrypted = Buffer.concat([decrypted, decipher.final()])
-      return JSON.parse(decrypted.toString())
-    }
-  },
-  isUrl: (str) => {
-    try {
-      new URL(str)
-      return /youtube.com|youtu.be/.test(str)
-    } catch {
-      return false
-    }
-  },
-  youtube: (url) => {
-    const patterns = [
-      /youtube.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-      /youtube.com\/embed\/([a-zA-Z0-9_-]{11})/,
-      /youtu.be\/([a-zA-Z0-9_-]{11})/
-    ]
-    for (let pattern of patterns) {
-      const match = url.match(pattern)
-      if (match) return match[1]
-    }
-    return null
-  },
-  request: async (endpoint, data = {}, method = "post") => {
-    try {
-      const { data: response } = await axios({
-        method,
-        url: `${endpoint.startsWith("http") ? "" : savetube.api.base}${endpoint}`,
-        data: method === "post" ? data : undefined,
-        params: method === "get" ? data : undefined,
-        headers: savetube.headers
-      })
-      return { status: true, code: 200, data: response }
-    } catch (error) {
-      return { status: false, code: error.response?.status || 500, error: error.message }
-    }
-  },
-  getCDN: async () => {
-    const response = await savetube.request(savetube.api.cdn, {}, "get")
-    if (!response.status) return response
-    return { status: true, code: 200, data: response.data.cdn }
-  },
-  download: async (link, type = "video") => {
-    if (!savetube.isUrl(link)) return { status: false, code: 400, error: "URL inválida" }
-    const id = savetube.youtube(link)
-    if (!id) return { status: false, code: 400, error: "No se pudo obtener el ID del video" }
-    try {
-      const cdnx = await savetube.getCDN()
-      if (!cdnx.status) return cdnx
-      const cdn = cdnx.data
-      const videoInfo = await savetube.request(
-        `https://${cdn}${savetube.api.info}`,
-        { url: `https://www.youtube.com/watch?v=${id}` }
-      )
-      if (!videoInfo.status || !videoInfo.data?.data)
-        return { status: false, code: 500, error: "No se pudo obtener información del video" }
-      const decrypted = await savetube.crypto.decrypt(videoInfo.data.data)
-      const downloadData = await savetube.request(
-        `https://${cdn}${savetube.api.download}`,
-        {
-          id,
-          downloadType: "video",
-          quality: "720p",
-          key: decrypted.key
-        }
-      )
-      if (!downloadData?.data?.data?.downloadUrl)
-        return { status: false, code: 500, error: "No se pudo obtener link de descarga" }
-      return {
-        status: true,
-        code: 200,
-        result: {
-          title: decrypted.title || "",
-          author: decrypted.channel || "",
-          views: decrypted.viewCount || "",
-          timestamp: decrypted.lengthSeconds || "",
-          ago: decrypted.uploadedAt || "",
-          format: "mp4",
-          download: downloadData.data.data.downloadUrl,
-          thumbnail: decrypted.thumbnail || ""
-        }
+function runCommand(cmd, args, timeout = 60000) {
+  return new Promise((resolve, reject) => {
+    const process = spawn(cmd, args)
+    let stdout = ''
+    let stderr = ''
+    
+    const timer = setTimeout(() => {
+      process.kill()
+      reject(new Error('Timeout'))
+    }, timeout)
+    
+    process.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+    
+    process.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+    
+    process.on('close', (code) => {
+      clearTimeout(timer)
+      if (code === 0) {
+        resolve(stdout)
+      } else {
+        reject(new Error(stderr || `Exit code: ${code}`))
       }
-    } catch (error) {
-      return { status: false, code: 500, error: error.message }
+    })
+    
+    process.on('error', reject)
+  })
+}
+
+async function downloadVideo(videoId) {
+  try {
+    const tempDir = './temp_videos'
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true })
     }
+    
+    const outputFile = `${tempDir}/${videoId}_${Date.now()}.mp4`
+    
+    const methods = [
+      {
+        name: 'yt-dlp HD',
+        cmd: 'yt-dlp',
+        args: ['-f', 'bestvideo[height<=720]+bestaudio/best[height<=720]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      },
+      {
+        name: 'youtube-dl',
+        cmd: 'youtube-dl',
+        args: ['-f', 'best[height<=480]', '-o', outputFile, `https://youtu.be/${videoId}`]
+      },
+      {
+        name: 'yt-dlp portable',
+        cmd: './yt-dlp-bin',
+        args: ['-f', 'best[height<=360]', '-o', outputFile, `https://youtu.be/${videoId}`],
+        download: true
+      }
+    ]
+    
+    for (const method of methods) {
+      try {
+        console.log(`🔄 Intentando con ${method.name}...`)
+        
+        if (method.download && !fs.existsSync(method.cmd)) {
+          console.log('📥 Descargando yt-dlp...')
+          const resp = await fetch('https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp')
+          const buffer = await resp.arrayBuffer()
+          fs.writeFileSync(method.cmd, Buffer.from(buffer))
+          fs.chmodSync(method.cmd, 0o755)
+        }
+        
+        await runCommand(method.cmd, method.args, 150000)
+        
+        if (fs.existsSync(outputFile)) {
+          console.log(`✅ ${method.name} funcionó`)
+          
+          const stats = fs.statSync(outputFile)
+          const sizeMB = (stats.size / (1024 * 1024)).toFixed(2)
+          
+          return {
+            success: true,
+            filePath: outputFile,
+            size: sizeMB,
+            source: method.name
+          }
+        }
+      } catch (error) {
+        console.log(`❌ ${method.name} falló:`, error.message)
+        continue
+      }
+    }
+    
+    return { success: false, error: 'No se pudo descargar el video' }
+    
+  } catch (error) {
+    console.error('💥 Error en downloadVideo:', error)
+    return { success: false, error: error.message }
   }
 }
 
 const handler = async (m, { conn, text, command }) => {
   await m.react("⌛")
-  if (!text?.trim())
-    return conn.reply(m.chat, "Dame el link de YouTube o el nombre XD", m)
+  
+  if (!text?.trim()) {
+    await m.react("❌")
+    return m.reply(`🎬 *DESCARGAR VIDEOS DE YOUTUBE*
+
+*Uso:* .ytmp4 <búsqueda o url>
+
+*Ejemplos:*
+.ytmp4 no hay nadie mas
+.ytmp4 https://youtu.be/xxxx
+.ytmp4 tutorial de python
+
+*Nota:* Videos enviados como video normal (no documento)
+*Límite:* ~50MB por video`)
+  }
+
+  let tempFile = null
+  
   try {
-    let url, title, thumbnail
-    if (savetube.isUrl(text)) {
-      const id = savetube.youtube(text)
-      const search = await yts({ videoId: id })
-      url = text
-      title = search.title || ""
-      thumbnail = search.thumbnail
+    let videoId, videoTitle
+    
+    if (text.includes('youtube.com') || text.includes('youtu.be')) {
+      videoId = extractVideoId(text)
+      if (!videoId) {
+        await m.react("❌")
+        return m.reply("❌ URL de YouTube no válida")
+      }
+      
+      const search = await yts({ videoId })
+      videoTitle = search.title || "YouTube Video"
     } else {
+      await m.react("🔍")
       const search = await yts.search({ query: text, pages: 1 })
-      if (!search.videos.length)
-        return m.reply("❌ ¡Ni con el radar del dragón encontré ese video!")
-      const videoInfo = search.videos[0]
-      url = videoInfo.url
-      title = videoInfo.title
-      thumbnail = videoInfo.thumbnail
-    }
-    const thumbResized = await resizeImage(await (await fetch(thumbnail)).buffer(), 300)
-    const res3 = await fetch("https://qu.ax/xCgVW.jpg")
-    const thumb3 = Buffer.from(await res3.arrayBuffer())
-    const fkontak = {
-      key: { fromMe: false, participant: "0@s.whatsapp.net" },
-      message: {
-        documentMessage: {
-          title: `🎬「 ${title} 」⚡`,
-          fileName: `Descargas - Dolphin Bot`,
-          jpegThumbnail: thumb3
-        }
+      
+      if (!search.videos.length) {
+        await m.react("❌")
+        return m.reply("❌ No encontré ese video")
       }
+      
+      videoId = search.videos[0].videoId
+      videoTitle = search.videos[0].title
     }
-    if (command == "ytmp4") {
-      const dl = await savetube.download(url, "video")
-      if (!dl.status) {
-        await m.react("✖️")
-        return m.reply(`❌ Error zorra: ${dl.error}`)
+    
+    console.log(` Descargando video: ${videoTitle.substring(0, 60)}`)
+    
+    await m.react("📥")
+    const progressMsg = await m.reply(`*Descargando video...*\n\n${videoTitle.substring(0, 50)} \n> DolphinBot`)
+    
+    const result = await downloadVideo(videoId)
+    
+    if (!result.success) {
+      await m.react("❌")
+      return m.reply(`❌ Error: ${result.error}\n\nInstala: \`sudo pacman -S youtube-dl\``)
+    }
+    
+    tempFile = result.filePath
+    
+    if (parseFloat(result.size) > 50) {
+      await m.react("⚠️")
+      fs.unlinkSync(tempFile)
+      return m.reply(`⚠️ Video demasiado grande (${result.size} MB)\n\n💡 Usa \`.ytmp4doc\` para videos más grandes\n   o busca un video más corto`)
+    }
+    
+    const safeTitle = videoTitle
+      .replace(/[<>:"/\\|?*]/g, '')
+      .substring(0, 50)
+    
+    await conn.sendMessage(m.chat, {
+      video: fs.readFileSync(tempFile),
+      mimetype: "video/mp4",
+      caption: `🎬 ${videoTitle}\n\n> DolphinBot x Carlos G`
+    }, { quoted: m })
+    
+    try {
+      await conn.sendMessage(m.chat, { delete: progressMsg.key })
+    } catch {}
+    
+    await m.react("✅")
+    
+    setTimeout(() => {
+      if (tempFile && fs.existsSync(tempFile)) {
+        try {
+          fs.unlinkSync(tempFile)
+        } catch {}
       }
-      try {
-        const { headers } = await axios.head(dl.result.download)
-        const fileSize = parseInt(headers["content-length"] || 0)
-        if (fileSize > 209715200) {
-          await m.react("✖️")
-          return m.reply("⚠️ El archivo supera los 200 MB, no puedo enviarlo.")
-        }
-      } catch {}
-      await conn.sendMessage(
-        m.chat,
-        {
-          video: { url: dl.result.download },
-          mimetype: "video/mp4",
-          fileName: `${dl.result.title}.mp4`,
-          jpegThumbnail: thumbResized,
-          caption: `🎬 *${dl.result.title}*`
-        },
-        { quoted: fkontak }
-      )
-      await m.react("✅")
-      return
-    }
+    }, 30000)
+    
   } catch (error) {
-    await m.react("✖️")
-    return m.reply(`💢 Error perra: ${error.message}`)
+    await m.react("❌")
+    console.error("ERROR:", error)
+    
+    if (tempFile && fs.existsSync(tempFile)) {
+      try { fs.unlinkSync(tempFile) } catch {}
+    }
+    
+    return m.reply(`Error: ${error.message}\n\nUsa \`.installtools\` para instalar dependencias`)
   }
 }
 
 handler.command = ["ytmp4"]
-handler.help = ["ytmp4"]
+handler.help = ["ytmp4 <búsqueda/url> - Descargar video"]
 handler.tags = ["descargas"]
 
 export default handler
