@@ -421,7 +421,7 @@ handler.cooldown = 25;
  * Available in private chats
  * @type {boolean}
  */
-handler.private = true;
+handler.private = false;
 
 /**
  * Sanitizes filenames for safe file operations

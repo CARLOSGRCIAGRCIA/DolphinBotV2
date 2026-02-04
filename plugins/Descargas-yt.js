@@ -494,7 +494,7 @@ handler.cooldown = 30;
  * Available in private chats
  * @type {boolean}
  */
-handler.private = true;
+handler.private = false;
 
 /**
  * Exports handler as default module
