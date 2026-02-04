@@ -13,7 +13,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   const personajesTop = [
     { nombre: 'Cristo rey 👑', precio: 20000000 },
     { nombre: 'Arcangel Supremo 😇', precio: precioAleatorio(5000000, 9999999) },
-    { nombre: 'The Carlos 🧠', precio: precioAleatorio(5000000, 9999999) },
+    { nombre: 'Carlos G', precio: precioAleatorio(5000000, 9999999) },
     { nombre: 'Dios del Tiempo ⏳', precio: precioAleatorio(5000000, 9999999) },
     { nombre: 'Dragón Ancestral 🐉', precio: precioAleatorio(5000000, 9999999) },
     { nombre: 'Samurai de la Sombra ⚔️', precio: precioAleatorio(5000000, 9999999) },

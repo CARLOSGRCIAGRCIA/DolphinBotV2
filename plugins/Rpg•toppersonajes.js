@@ -6,7 +6,7 @@ const handler = async (m, { conn }) => {
   const personajesTop = [
     { nombre: 'Cristo rey 👑', precio: 20000000 },
     { nombre: 'Arcangel Supremo 😇', precio: 9000000 },
-    { nombre: 'The Carlos 🧠', precio: 8500000 },
+    { nombre: 'Carlos G', precio: 8500000 },
     { nombre: 'Dios del Tiempo ⏳', precio: 9100000 },
     { nombre: 'Dragón Ancestral 🐉', precio: 8700000 },
     { nombre: 'Samurai de la Sombra ⚔️', precio: 8900000 },
