@@ -83,8 +83,8 @@ export async function before(m, { conn }) {
         }
 
         mensaje = m.messageStubType === 29
-          ? `*${targetName}* ahora es admin del grupo 🥳\n\n💫 Acción hecha por: ${usuario}`
-          : `*${targetName}* deja de ser admin 😿\n\n💫 Acción hecha por: ${usuario}`;
+          ? `*${targetName}* ahora es admin del grupo\n\n Acción hecha por: ${usuario}`
+          : `*${targetName}* deja de ser admin \n\n Acción hecha por: ${usuario}`;
         break;
       }
       default:
