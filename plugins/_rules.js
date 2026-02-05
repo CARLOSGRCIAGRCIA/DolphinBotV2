@@ -215,7 +215,7 @@ handler.command = ['rules', 'reglas', 'rule', 'regla'];
  * Indicates command requires previous registration
  * @type {boolean}
  */
-handler.register = true;
+handler.register = false;
 
 /**
  * Indicates command can be used in groups
