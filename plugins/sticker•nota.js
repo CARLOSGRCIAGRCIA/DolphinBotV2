@@ -71,5 +71,5 @@ handler.help = ['nota', 'Nota'];
 handler.tags = ['sticker'];
 handler.command = ['nota', 'Nota'];
 handler.group = false;
-handler.register = true;
+handler.register = false;
 export default handler;

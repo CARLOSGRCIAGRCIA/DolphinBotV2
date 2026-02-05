@@ -96,6 +96,6 @@ handler.help = ['pat'];
 handler.tags = ['sticker'];
 handler.command = ['pat'];
 handler.group = false;
-handler.register = true;
+handler.register = false;
 
 export default handler;

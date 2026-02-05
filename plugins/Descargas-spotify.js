@@ -145,6 +145,6 @@ function formatDuration(ms) {
 handler.help = ['spotify <canción>'];
 handler.tags = ['busqueda', 'descargas'];
 handler.command = ['spotify', 'sp', 'song'];
-handler.register = true;
+handler.register = false;
 
 export default handler;

@@ -29,6 +29,6 @@ handler.tags = ['anime'];
 handler.command = ['animelink'];
 
 handler.cookies = 1;
-handler.register = true;
+handler.register = false;
 
 export default handler;
