@@ -2,7 +2,7 @@ import { join, dirname } from "path";
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
 import { setupMaster, fork } from "cluster";
-import { existsSync, writeFileSync } from "fs";
+import { existsSync, writeFileSync, unlinkSync } from "fs";
 import cfonts from "cfonts";
 import { createInterface } from "readline";
 import chalk from "chalk";
@@ -129,56 +129,175 @@ async function iniciarDolphinBot() {
 
 let isRunning = false;
 let childProcess = null;
+let restartCount = 0;
+const MAX_QUICK_RESTARTS = 5;
+const RESTART_WINDOW = 60000;
+let firstRestartTime = null;
 
 function start(file) {
-  if (isRunning) return;
+  if (isRunning) {
+    console.log(chalk.yellow("⚠️ El bot ya está ejecutándose"));
+    return;
+  }
+  
   isRunning = true;
   
   let args = [join(__dirname, "núcleo•dolphin", file), ...process.argv.slice(2)];
+  
+  console.log(chalk.cyan(`\nIniciando proceso: ${file}`));
+  
   setupMaster({ exec: args[0], args: args.slice(1) });
   
   childProcess = fork();
   
+  childProcess.on("message", (msg) => {
+    if (msg === "ready") {
+      console.log(chalk.green("✓ Bot conectado y listo"));
+      restartCount = 0;
+      firstRestartTime = null;
+    }
+  });
+  
   childProcess.on("exit", (_, code) => {
     isRunning = false;
-    childProcess = null;
+    const exitTime = Date.now();
     
     console.log(chalk.yellow(`\n⚠️ Proceso finalizado con código: ${code}`));
     
-    if (code !== 0) {
-      console.log(chalk.cyan("🔄 Reiniciando en 3 segundos..."));
-      setTimeout(() => start(file), 3000);
+    if (firstRestartTime && exitTime - firstRestartTime > RESTART_WINDOW) {
+      restartCount = 0;
+      firstRestartTime = null;
     }
+    
+    if (!firstRestartTime) {
+      firstRestartTime = exitTime;
+    }
+    restartCount++;
+    
+    childProcess = null;
+    
+    if (code === 0) {
+      console.log(chalk.green("✓ Bot cerrado correctamente"));
+      return;
+    }
+    
+    if (restartCount > MAX_QUICK_RESTARTS) {
+      console.log(
+        chalk.red(
+          `\n❌ Demasiados reinicios (${restartCount}) en poco tiempo`
+        )
+      );
+      console.log(chalk.yellow("⏳ Esperando 30 segundos antes de reiniciar..."));
+      setTimeout(() => {
+        restartCount = 0;
+        firstRestartTime = null;
+        start(file);
+      }, 30000);
+      return;
+    }
+    
+    const delay = Math.min(3000 * restartCount, 15000);
+    console.log(
+      chalk.cyan(
+        `🔄 Reiniciando en ${delay / 1000} segundos... (Intento ${restartCount}/${MAX_QUICK_RESTARTS})`
+      )
+    );
+    
+    setTimeout(() => start(file), delay);
   });
   
   childProcess.on("error", (err) => {
     console.error(chalk.red("❌ Error en proceso hijo:"), err);
     isRunning = false;
     childProcess = null;
+    
+    console.log(chalk.yellow("⏳ Reintentando en 5 segundos..."));
+    setTimeout(() => start(file), 5000);
   });
 }
 
-// Manejo de señales para cierre limpio
-process.on("SIGINT", () => {
-  console.log(chalk.yellow("\n⚠️ Recibida señal SIGINT, cerrando limpiamente..."));
+process.on("SIGINT", async () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGINT (Ctrl+C)"));
+  console.log(chalk.cyan("🛑 Cerrando Dolphin-Bot de forma segura..."));
+  
   if (childProcess) {
     childProcess.kill("SIGTERM");
+    
+    await new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        console.log(chalk.red("⚠️ Forzando cierre del proceso hijo..."));
+        childProcess.kill("SIGKILL");
+        resolve();
+      }, 10000);
+      
+      childProcess.once("exit", () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
   }
+  
+  try {
+    if (existsSync("./.arranque-ok")) {
+      unlinkSync("./.arranque-ok");
+    }
+  } catch (e) {
+    // Ignorar error
+  }
+  
+  console.log(chalk.green("✓ Dolphin-Bot cerrado correctamente"));
   process.exit(0);
 });
 
-process.on("SIGTERM", () => {
-  console.log(chalk.yellow("\n⚠️ Recibida señal SIGTERM, cerrando limpiamente..."));
+process.on("SIGTERM", async () => {
+  console.log(chalk.yellow("\n⚠️ Recibida señal SIGTERM"));
+  console.log(chalk.cyan("🛑 Cerrando Dolphin-Bot de forma segura..."));
+  
+  if (childProcess) {
+    childProcess.kill("SIGTERM");
+    
+    await new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        childProcess.kill("SIGKILL");
+        resolve();
+      }, 10000);
+      
+      childProcess.once("exit", () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    });
+  }
+  
+  try {
+    if (existsSync("./.arranque-ok")) {
+      unlinkSync("./.arranque-ok");
+    }
+  } catch (e) {
+    // Ignorar error
+  }
+  
+  console.log(chalk.green("✓ Dolphin-Bot cerrado correctamente"));
+  process.exit(0);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error(chalk.red("❌ Error no capturado:"), err);
   if (childProcess) {
     childProcess.kill("SIGTERM");
   }
-  process.exit(0);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error(chalk.red("❌ Promesa rechazada no manejada:"), reason);
 });
 
 const archivoArranque = "./.arranque-ok";
 if (!existsSync(archivoArranque)) {
   await iniciarDolphinBot();
   writeFileSync(archivoArranque, "DOLPHINBOT_RUNNING");
+} else {
+  console.log(chalk.yellow("\n⚠️ Detectado arranque previo, iniciando directamente..."));
 }
 
 start("start.js");

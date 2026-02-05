@@ -112,19 +112,15 @@ export async function handler(chatUpdate) {
         if (!(key in user)) {
           user[key] = defaultValue;
         } else if (typeof defaultValue === 'number' && !isNumber(user[key])) {
-          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo numérico para ${key} del usuario ${m.sender}`));
           user[key] = defaultValue;
         } else if (typeof defaultValue === 'boolean' && typeof user[key] !== 'boolean') {
-          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo booleano para ${key} del usuario ${m.sender}`));
           user[key] = defaultValue;
         } else if (typeof defaultValue === 'string' && typeof user[key] !== 'string') {
-          console.log(chalk.yellow(`[HANDLER] Corrigiendo tipo string para ${key} del usuario ${m.sender}`));
           user[key] = defaultValue;
         }
       }
 
       if (typeof user.registered !== 'boolean') {
-        console.log(chalk.yellow(`[HANDLER] Corrigiendo campo registered para ${m.sender}: ${user.registered} -> false`));
         user.registered = false;
       }
       
@@ -235,7 +231,6 @@ export async function handler(chatUpdate) {
         
         return lid;
       } catch (error) {
-        console.error(chalk.red('[HANDLER] Error obteniendo LID:'), error);
         return id;
       }
     }
@@ -459,12 +454,10 @@ export async function handler(chatUpdate) {
         
         if (plugin.register === true || plugin.register) {
           if (!_user || typeof _user.registered !== 'boolean') {
-            console.log(chalk.yellow(`[HANDLER] Campo registered inválido para ${m.sender}: ${_user?.registered}`));
             _user.registered = false;
           }
           
           if (_user.registered !== true) {
-            console.log(chalk.yellow(`[HANDLER] Usuario ${m.sender} no registrado intentando usar ${command}`));
             fail("unreg", m, this);
             continue;
           }
@@ -622,7 +615,7 @@ export async function handler(chatUpdate) {
 global.dfail = (type, m, usedPrefix, command, conn) => {
   const msg = {
     rowner: `🛑 *ACCESO RESTRINGIDO*\n\n> Solo el *Creador Supremo* puede ejecutar este protocolo.\n\n🧬 Usuario Autorizado: 𝘾𝘼𝙍𝙇𝙊𝙎\n🔗 Sistema: root@dolphin-bot://omega/core`,
-    owner: `⚙️🔒 *MÓDULO DEV: ACCESO BLOQUEADO*\n\n> Esta función está anclada a permisos de *𝙳𝙴𝚂𝙰𝚁𝚁𝙊𝙇𝙇𝙰𝙳𝙊𝚁*.\n\n🧠 Consola de Seguridad: dev@dolphin.ai/core.sh`,
+    owner: `⚙️🔒 *MÓDULO DEV: ACCESO BLOQUEADO*\n\n> Esta función está anclada a permisos de *𝙳𝙴𝚂𝙰𝚁𝚁𝙾𝙇𝙇𝙰𝙳𝙊𝚁*.\n\n🧠 Consola de Seguridad: dev@dolphin.ai/core.sh`,
     premium: `*REQUIERE CUENTA PREMIUM*\n\n> 🚫 Módulo exclusivo para usuarios *𝙑𝙄𝙋 - 𝙋𝙍𝙀𝙈𝙄𝙐𝙈*.\n\n📡 Actualiza tu plan con: */vip*\n⚙️ Estado: denegado`,
     private: `🔒 *SOLO CHAT PRIVADO* 📲\n\n> Este comando no puede ejecutarse en grupos por razones de seguridad.\n\n🧬 Ejecuta este protocolo directamente en el chat privado.`,
     admin: `🛡️ *FUNCIÓN RESTRINGIDA*\n\n> Solo los administradores del *Grupo* tienen acceso.\n\n⚠️ Intento no autorizado.`,
