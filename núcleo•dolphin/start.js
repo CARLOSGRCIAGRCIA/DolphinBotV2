@@ -115,6 +115,9 @@ global.db = new Low(
 
 global.DATABASE = global.db;
 
+global.lidCache = new Map();
+global.groupMetadataCache = new Map();
+
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) {
     return new Promise((resolve) => {
@@ -391,8 +394,9 @@ if (!opts["test"]) {
 }
 
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 10;
+const MAX_RECONNECT_ATTEMPTS = 50;
 let reconnectTimeout = null;
+let isReconnecting = false;
 
 async function connectionUpdate(update) {
   const { connection, lastDisconnect, isNewLogin, qr } = update;
@@ -403,6 +407,7 @@ async function connectionUpdate(update) {
   if (isNewLogin) {
     conn.isInit = true;
     reconnectAttempts = 0;
+    isReconnecting = false;
   }
   
   if (!global.db.data) {
@@ -422,8 +427,9 @@ async function connectionUpdate(update) {
   }
   
   if (connection === "open") {
-    console.log(chalk.bold.green("\n 𝘿𝙊𝙇𝙋𝙃𝙄𝙉 𝘽𝙊𝙏 𝘾𝙊𝙉𝙀𝘾𝙏𝘼𝘿𝙊 🐬"));
+    console.log(chalk.bold.green("\n 𝘿𝙊𝙇𝙋𝙃𝙄𝙉 𝘽𝙊𝙏 𝘾𝙊𝙉𝙀𝘾𝙏𝘼𝙳𝙊 🐬"));
     reconnectAttempts = 0;
+    isReconnecting = false;
     
     global.lastBio = null;
     
@@ -440,7 +446,11 @@ async function connectionUpdate(update) {
     
     if (reconnectTimeout) {
       clearTimeout(reconnectTimeout);
+      reconnectTimeout = null;
     }
+    
+    let shouldReconnect = false;
+    let reconnectDelay = 5000;
     
     switch (reason) {
       case DisconnectReason.badSession:
@@ -463,12 +473,16 @@ async function connectionUpdate(update) {
         console.log(
           chalk.bold.magentaBright(`\n⚠︎ CONEXIÓN CERRADA, RECONECTANDO... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`)
         );
+        shouldReconnect = true;
+        reconnectDelay = 3000;
         break;
         
       case DisconnectReason.connectionLost:
         console.log(
           chalk.bold.blueBright(`\n⚠︎ CONEXIÓN PERDIDA, RECONECTANDO... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`)
         );
+        shouldReconnect = true;
+        reconnectDelay = 2000;
         break;
         
       case DisconnectReason.connectionReplaced:
@@ -481,6 +495,8 @@ async function connectionUpdate(update) {
         
       case DisconnectReason.restartRequired:
         console.log(chalk.bold.cyanBright(`\n☑ REINICIANDO SESIÓN...`));
+        shouldReconnect = true;
+        reconnectDelay = 1000;
         break;
         
       case DisconnectReason.timedOut:
@@ -489,6 +505,8 @@ async function connectionUpdate(update) {
             `\n⚠︎ TIEMPO AGOTADO, REINTENTANDO CONEXIÓN... (Intento ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`
           )
         );
+        shouldReconnect = true;
+        reconnectDelay = 5000;
         break;
         
       default:
@@ -497,30 +515,51 @@ async function connectionUpdate(update) {
             `\n⚠︎ DESCONEXIÓN DESCONOCIDA (${reason || "Desconocido"})`
           )
         );
+        shouldReconnect = true;
+        reconnectDelay = 5000;
         break;
     }
     
-    if (reason !== DisconnectReason.loggedOut && 
-        reason !== DisconnectReason.badSession &&
-        reason !== DisconnectReason.connectionReplaced) {
-      
+    if (shouldReconnect && !isReconnecting) {
       if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        isReconnecting = true;
         reconnectAttempts++;
         
-        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts - 1), 60000);
+        const backoffDelay = Math.min(
+          reconnectDelay * Math.pow(1.5, reconnectAttempts - 1),
+          60000
+        );
         
-        console.log(chalk.cyan(`🔄 Reconectando en ${delay / 1000} segundos...`));
+        console.log(chalk.cyan(`🔄 Reconectando en ${backoffDelay / 1000} segundos...`));
         
         reconnectTimeout = setTimeout(async () => {
           try {
-            if (conn?.ws?.socket === null) {
-              await global.reloadHandler(true);
-              global.timestamp.connect = new Date();
+            console.log(chalk.blue(`🔄 Intento de reconexión ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}...`));
+            
+            if (conn?.ws?.socket) {
+              try {
+                conn.ws.socket.terminate();
+              } catch (e) {
+                // Ignorar error
+              }
             }
+            
+            await global.reloadHandler(true);
+            global.timestamp.connect = new Date();
+            
+            console.log(chalk.green('✓ Handler recargado, esperando conexión...'));
+            
+            isReconnecting = false;
           } catch (error) {
             console.error(chalk.red('[CONN] Error en reconexión:'), error);
+            isReconnecting = false;
+            
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+              console.log(chalk.yellow('⚠️ Reintentando reconexión...'));
+              await connectionUpdate({ connection: 'close', lastDisconnect });
+            }
           }
-        }, delay);
+        }, backoffDelay);
       } else {
         console.log(
           chalk.bold.red(
@@ -529,9 +568,21 @@ async function connectionUpdate(update) {
         );
         console.log(
           chalk.bold.yellow(
-            `\n⚠️ Por favor reinicia el bot manualmente`
+            `\n⚠️ Reiniciando el bot completamente...`
           )
         );
+        
+        reconnectAttempts = 0;
+        isReconnecting = false;
+        
+        setTimeout(async () => {
+          try {
+            await global.reloadHandler(true);
+          } catch (error) {
+            console.error(chalk.red('[CONN] Error en reinicio completo:'), error);
+            process.exit(1);
+          }
+        }, 5000);
       }
     }
   }
@@ -621,12 +672,18 @@ global.reloadHandler = async function (restatConn) {
   if (restatConn) {
     const oldChats = global.conn.chats;
     try {
+      if (global.conn.ws && global.conn.ws.socket) {
+        global.conn.ws.socket.terminate();
+      }
       global.conn.ws.close();
     } catch (e) {
       console.error(chalk.red('[RELOAD] Error cerrando conexión anterior:'), e);
     }
     
     conn.ev.removeAllListeners();
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     global.conn = makeWASocket(connectionOptions, { chats: oldChats });
     isInit = true;
   }
@@ -921,7 +978,7 @@ setInterval(async () => {
   
   const _uptime = process.uptime() * 1000;
   const uptime = clockString(_uptime);
-  const bio = `🦠 Dolphin-Bot-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`;
+  const bio = `🐬 Dolphin-Bot-MD |「🕒」Aᥴ𝗍і᥎o: ${uptime}`;
   
   if (!global.lastBio || global.lastBio !== bio) {
     try {
