@@ -15,14 +15,14 @@ global.botNumber = ''; // Ejemplo: 521234567890
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.owner = [
   ['5219516526675', '🜲 𝗖𝗿𝗲𝗮𝗱𝗼𝗿 👻', true],
-  ['5217971289909'],
-  ['5217971282613', '', false],
-  ['573244278232', 'neji.x.s', true],
+  [''],
+  ['', '', false],
+  ['', '', true],
   ['', '', false]
 ];
-global.mods = ['5215544876071'];
-global.suittag = ['5215544876071'];
-global.prems = ['5215544876071'];
+global.mods = [''];
+global.suittag = [''];
+global.prems = [''];
 
 //*─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─✞─ׄ─ׅ─ׄ─*
 global.libreria = 'Baileys';
@@ -188,12 +188,17 @@ class CacheManager {
   // Limpiar elementos expirados
   cleanup() {
     const now = Date.now();
+    let removed = 0;
+    
     for (const [key, item] of this.cache.entries()) {
       if (now - item.timestamp > this.timeout) {
         this.cache.delete(key);
         this.accessCount.delete(key);
+        removed++;
       }
     }
+    
+    return removed;
   }
 }
 
@@ -209,33 +214,33 @@ global.lastBio = null;
 // Limpieza periódica de caché optimizada
 setInterval(() => {
   try {
-    if (global.groupMetadataCache) {
+    if (global.groupMetadataCache && typeof global.groupMetadataCache.cleanup === 'function') {
       const beforeSize = global.groupMetadataCache.size;
-      global.groupMetadataCache.cleanup();
+      const removed = global.groupMetadataCache.cleanup();
       const afterSize = global.groupMetadataCache.size;
       
-      if (beforeSize !== afterSize) {
-        console.log(chalk.cyan(`[CACHE] Metadata de grupos limpiada: ${beforeSize} → ${afterSize}`));
+      if (removed > 0) {
+        console.log(chalk.cyan(`[CACHE] Metadata de grupos limpiada: ${beforeSize} → ${afterSize} (${removed} eliminados)`));
       }
     }
     
-    if (global.lidCache) {
+    if (global.lidCache && typeof global.lidCache.cleanup === 'function') {
       const beforeSize = global.lidCache.size;
-      global.lidCache.cleanup();
+      const removed = global.lidCache.cleanup();
       const afterSize = global.lidCache.size;
       
-      if (beforeSize !== afterSize) {
-        console.log(chalk.cyan(`[CACHE] LID cache limpiado: ${beforeSize} → ${afterSize}`));
+      if (removed > 0) {
+        console.log(chalk.cyan(`[CACHE] LID cache limpiado: ${beforeSize} → ${afterSize} (${removed} eliminados)`));
       }
     }
 
-    if (global.userCache) {
+    if (global.userCache && typeof global.userCache.cleanup === 'function') {
       const beforeSize = global.userCache.size;
-      global.userCache.cleanup();
+      const removed = global.userCache.cleanup();
       const afterSize = global.userCache.size;
       
-      if (beforeSize !== afterSize) {
-        console.log(chalk.cyan(`[CACHE] User cache limpiado: ${beforeSize} → ${afterSize}`));
+      if (removed > 0) {
+        console.log(chalk.cyan(`[CACHE] User cache limpiado: ${beforeSize} → ${afterSize} (${removed} eliminados)`));
       }
     }
 
@@ -252,14 +257,16 @@ setInterval(() => {
 // Limpieza agresiva cada hora
 setInterval(() => {
   try {
-    if (global.groupMetadataCache) {
+    if (global.groupMetadataCache && typeof global.groupMetadataCache.clear === 'function') {
+      const size = global.groupMetadataCache.size;
       global.groupMetadataCache.clear();
-      console.log(chalk.yellow('[CACHE] Metadata cache completamente limpiado'));
+      console.log(chalk.yellow(`[CACHE] Metadata cache completamente limpiado (${size} elementos)`));
     }
     
-    if (global.userCache) {
+    if (global.userCache && typeof global.userCache.clear === 'function') {
+      const size = global.userCache.size;
       global.userCache.clear();
-      console.log(chalk.yellow('[CACHE] User cache completamente limpiado'));
+      console.log(chalk.yellow(`[CACHE] User cache completamente limpiado (${size} elementos)`));
     }
   } catch (error) {
     console.error(chalk.red('[CACHE] Error en limpieza agresiva:'), error);

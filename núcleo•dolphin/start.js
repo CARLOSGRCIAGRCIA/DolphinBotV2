@@ -115,8 +115,8 @@ global.db = new Low(
 
 global.DATABASE = global.db;
 
-global.lidCache = new Map();
-global.groupMetadataCache = new Map();
+// Los caches se inicializan en config.js con CacheManager
+// NO inicializar aquí como Map() simple
 
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) {
